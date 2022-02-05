@@ -52,7 +52,7 @@
 #'
 demultiplex <- function (sample.tbl, in.folder, out.folder, fastq.tag = "fastq",
                          R1.tag = "R1", R2.tag = "R2", compress.out = TRUE){
-  cat("Demultiplexing:\n")
+  cat("Demultiplexing: ")
   out.ext <- if_else(compress.out, str_c(".", fastq.tag, ".gz"), str_c(".", fastq.tag))
   cnames <- c("SampleID", "BarcodeSequence", "FastqFileTag")
   if(sum(is.na(match(cnames, colnames(sample.tbl)))) > 0)
