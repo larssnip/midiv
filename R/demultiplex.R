@@ -57,7 +57,7 @@ demultiplex <- function (sample.tbl, in.folder, out.folder, fastq.tag = "fastq",
   cat("De-multiplexing: ")
   out.ext <- c(str_c(R1.tag, ".", fastq.tag),
                str_c(R2.tag, ".", fastq.tag))
-  out.ext <- if_else(compress.out, str_c(out.ext, ".gz"), out.ext)
+  if(compress.out) out.ext <- str_c(out.ext, ".gz")
   cnames <- c("SampleID", "BarcodeSequence", "FastqFileTag")
   if(sum(is.na(match(cnames, colnames(sample.tbl)))) > 0)
     stop("The sample.tbl must have columns named SampleID, BarcodeSequence and FastqFileTag")
