@@ -9,8 +9,8 @@ demultiplex(
   in.folder,
   out.folder,
   fastq.tag = "fastq",
-  R1.tag = "R1",
-  R2.tag = "R2",
+  R1.tag = "_R1",
+  R2.tag = "_R2",
   compress.out = TRUE
 )
 }
@@ -30,10 +30,12 @@ demultiplex(
 \item{compress.out}{Logical to indicate compressed output or not.}
 }
 \value{
-The function will output the demultiplexed fastq-files to the \code{out.folder}.
+The function will output the de-multiplexed fastq-files to the \code{out.folder}.
 The name of each file consists of the corresponding SampleID text, followed
 by the \code{R1.tag}/\code{R2.tag}, followed by the \code{fastq.tag}. If
-\code{compress.out = TRUE} then the extension `.gz` is also added.
+\code{compress.out = TRUE} then the extension `.gz` is also added. The
+extensions added to the SampleID texts in each file name are returned by
+the function.
 }
 \description{
 Demultiplexing Illumina data based on the extra forward barcode

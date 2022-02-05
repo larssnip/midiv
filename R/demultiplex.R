@@ -36,10 +36,12 @@
 #' The fastq files in \code{in.folder} may be compressed (.gz). All new fastq
 #' files written to out.folder will be compressed (.gz) if compress.out=TRUE.
 #'
-#' @return The function will output the demultiplexed fastq-files to the \code{out.folder}.
+#' @return The function will output the de-multiplexed fastq-files to the \code{out.folder}.
 #' The name of each file consists of the corresponding SampleID text, followed
 #' by the \code{R1.tag}/\code{R2.tag}, followed by the \code{fastq.tag}. If
-#' \code{compress.out = TRUE} then the extension `.gz` is also added.
+#' \code{compress.out = TRUE} then the extension `.gz` is also added. The
+#' extensions added to the SampleID texts in each file name are returned by
+#' the function.
 #'
 #' @author Lars Snipen.
 #'
@@ -51,9 +53,11 @@
 #' @export writeFasta
 #'
 demultiplex <- function (sample.tbl, in.folder, out.folder, fastq.tag = "fastq",
-                         R1.tag = "R1", R2.tag = "R2", compress.out = TRUE){
-  cat("Demultiplexing: ")
-  out.ext <- if_else(compress.out, str_c(".", fastq.tag, ".gz"), str_c(".", fastq.tag))
+                         R1.tag = "_R1", R2.tag = "_R2", compress.out = TRUE){
+  cat("De-multiplexing: ")
+  out.ext <- c(str_c(R1.tag, ".", fastq.tag),
+               str_c(R2.tag, ".", fastq.tag))
+  out.ext <- if_else(compress.out, str_c(out.ext, ".gz"), out.ext)
   cnames <- c("SampleID", "BarcodeSequence", "FastqFileTag")
   if(sum(is.na(match(cnames, colnames(sample.tbl)))) > 0)
     stop("The sample.tbl must have columns named SampleID, BarcodeSequence and FastqFileTag")
@@ -95,12 +99,12 @@ demultiplex <- function (sample.tbl, in.folder, out.folder, fastq.tag = "fastq",
         mutate(R1.Quality = str_sub(R1.Quality, start = nc + 1, end = -1))
       tbl0 %>% select(starts_with("R1")) %>%
         rename(Header = R1.Header, Sequence = R1.Sequence, Quality = R1.Quality) %>%
-        writeFastq(out.file = file.path(normalizePath(out.folder), str_c(sample.tbl$SampleID[idx[j]], "_", R1.tag, out.ext)))
+        writeFastq(out.file = file.path(normalizePath(out.folder), str_c(sample.tbl$SampleID[idx[j]], out.ext[1])))
       tbl0 %>% select(starts_with("R2")) %>%
         rename(Header = R2.Header, Sequence = R2.Sequence, Quality = R2.Quality) %>%
-        writeFastq(out.file = file.path(normalizePath(out.folder), str_c(sample.tbl$SampleID[idx[j]], "_", R2.tag, out.ext)))
+        writeFastq(out.file = file.path(normalizePath(out.folder), str_c(sample.tbl$SampleID[idx[j]], out.ext[2])))
       cat("found", nrow(tbl0), "read-pairs\n")
     }
   }
-  return(NULL)
+  return(out.ext)
 }
