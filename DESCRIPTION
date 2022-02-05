@@ -1,0 +1,12 @@
+Package: midiv
+Type: Package
+Title: MiDiv lab demultiplexing
+Version: 1.0.0
+Author: Lars Snipen
+Maintainer: Lars Snipen <lars.snipen@nmbu.no>
+Description: Includes the special MiDiv de-multiplexing of Illumina sequencing data.
+License: GPL-2
+Depends: R (>= 4.0.0), microseq, stringr, dplyr, tidyselect
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2
