@@ -43,8 +43,6 @@
 #'
 #' @author Lars Snipen.
 #'
-#' @seealso \code{\link{readFastq}}.
-#'
 #' @importFrom stringr str_c str_length
 #' @importFrom dplyr filter %>% if_else select mutate rename bind_cols
 #' @importFrom microseq readFastq writeFastq

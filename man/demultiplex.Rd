@@ -64,9 +64,6 @@ unique to each file-pair (could be the entire filename).
 The fastq files in \code{in.folder} may be compressed (.gz). All new fastq
 files written to out.folder will be compressed (.gz) if compress.out=TRUE.
 }
-\seealso{
-\code{\link{readFastq}}.
-}
 \author{
 Lars Snipen.
 }
