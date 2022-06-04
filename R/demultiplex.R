@@ -72,7 +72,7 @@ demultiplex <- function(sample.tbl, in.folder, out.folder, compress.out = TRUE,
     idx <- which(sample.tbl$Rawfile_R1 == utbl$Rawfile_R1[i] & sample.tbl$Rawfile_R2 == utbl$Rawfile_R2[i])
     cat(" found", length(idx), "samples with reads from these raw files:\n")
     for(j in 1:length(idx)){
-      cat("      Barcode", sample.tbl$Barcode[idx[j]], "...")
+      cat("      Barcode", sample.tbl$Barcode[idx[j]], "...\n")
       nc <- str_length(sample.tbl$Barcode[idx[j]])
       tbl0 <- tbl %>%
         filter(str_detect(R1.Sequence, str_c("^", sample.tbl$Barcode[idx[j]]))) %>%
@@ -84,7 +84,7 @@ demultiplex <- function(sample.tbl, in.folder, out.folder, compress.out = TRUE,
       tbl0 %>% select(starts_with("R2")) %>%
         rename(Header = R2.Header, Sequence = R2.Sequence, Quality = R2.Quality) %>%
         writeFastq(out.file = file.path(out.folder, str_c(sample.tbl$SampleID[idx[j]], out.ext[2])))
-      cat("found", nrow(tbl0), "read-pairs\n")
+      cat("         found", nrow(tbl0), "read-pairs\n")
     }
   }
   return(TRUE)
