@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Installation
-This small R package contains the MiDiv lab demultiplexing for Illumina sequence data.
+This small R package contains the MiDiv lab de-multiplexing for Illumina sequence data.
 
 Install the package from GitHub by
 ```{r, eval=FALSE}

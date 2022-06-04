@@ -2,16 +2,14 @@
 % Please edit documentation in R/demultiplex.R
 \name{demultiplex}
 \alias{demultiplex}
-\title{Demultiplexing fastq files}
+\title{De-multiplexing fastq files}
 \usage{
 demultiplex(
   sample.tbl,
   in.folder,
   out.folder,
-  fastq.tag = "fastq",
-  R1.tag = "_R1",
-  R2.tag = "_R2",
-  compress.out = TRUE
+  compress.out = TRUE,
+  pattern = "_R[12].fastq"
 )
 }
 \arguments{
@@ -19,52 +17,46 @@ demultiplex(
 
 \item{in.folder}{Name of folder where raw fastq files are located.}
 
-\item{out.folder}{Name of older to output demultiplexed fastq files.}
-
-\item{fastq.tag}{Short text (file extension) to identify fastq files from other files.}
-
-\item{R1.tag}{Short text to identify R1 (forward) reads files.}
-
-\item{R2.tag}{Short text to identify R2 (reverse) reads files.}
+\item{out.folder}{Name of folder to output de-multiplexed fastq files.}
 
 \item{compress.out}{Logical to indicate compressed output or not.}
+
+\item{pattern}{The pattern to recognize the raw fastq files from other files}
 }
 \value{
-The function will output the de-multiplexed fastq-files to the \code{out.folder}.
-The name of each file consists of the corresponding SampleID text, followed
-by the \code{R1.tag}/\code{R2.tag}, followed by the \code{fastq.tag}. If
-\code{compress.out = TRUE} then the extension `.gz` is also added. The
-extensions added to the SampleID texts in each file name are returned by
-the function.
+The function will output the de-multiplexed fastq-files to the
+\code{out.folder}. The name of each file consists of the corresponding
+SampleID text, with the \code{_R1.fastq}/\code{_R2.fastq} extension. If
+\code{compress.out = TRUE} the extension \code{.gz} is also added.
 }
 \description{
-Demultiplexing Illumina data based on the extra forward barcode
+De-multiplexing Illumina data based on the extra forward barcode
 used by MiDiv lab.
 }
 \details{
 The input \code{sample.tbl} must be a table (tibble or data.frame)
-with one row for each sample. It must contain the columns named (exactly)
-SampleID, BarcodeSequence and FastqFileTag, but may have other columns as well.
-Below the 3 required columns are explained.
+with one row for each sample. It must follow the MiDiv sample_table standard
+format. The columns used by this function are:
+* SampleID
+* Rawfile_R1
+* Rawfile_R2
+* Barcode
 
 The SampleID should be a short text to uniquely identify each sample. It will
 be used to form the new fastq filenames, so avoid using symbols not recommended
 in filenames (e.g. space, slash). It is also wise to have a letter, not an integer,
 as the first symbol in such SampleID texts.
 
-Demultiplexing means extracting subsets of reads from fastq files, and saving
+Demultiplexing means extracting subsets of reads from raw fastq files, and saving
 each subset on new fastq files. Each subset is identified by a barcode
-sequence, and this must be listed in the BarcodeSequence column. The Barcode
+sequence, and this must be listed in the Barcode column. The Barcode
 sequence is matched at the start of the R1-reads only.
 
-The original fastq files must all be in the \code{in.folder}. The \code{fastq.tag}
-is used to separate these files from other files that may be present in \code{in.folder}.
-The FastqFileTag must be a short text that uniquely identifies each raw fastaq
-file in \code{in.folder}, i.e. it must be a part of the filename that is
-unique to each file-pair (could be the entire filename).
-
-The fastq files in \code{in.folder} may be compressed (.gz). All new fastq
-files written to out.folder will be compressed (.gz) if compress.out=TRUE.
+The original fastq files must all be in the \code{in.folder}. These files may
+be compressed (.gz). The \code{pattern} is matched to all file names in this
+folder, and should give a match against all raw fastq files. All new fastq
+files written to \code{out.folder} will
+also be compressed (.gz) if \code{compress.out = TRUE}.
 }
 \author{
 Lars Snipen.

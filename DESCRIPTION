@@ -1,7 +1,7 @@
 Package: midiv
 Type: Package
 Title: MiDiv lab demultiplexing
-Version: 1.0.0
+Version: 1.1.0
 Author: Lars Snipen
 Maintainer: Lars Snipen <lars.snipen@nmbu.no>
 Description: Includes the special MiDiv de-multiplexing of Illumina sequencing data.
