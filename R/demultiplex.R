@@ -39,7 +39,12 @@
 #' SampleID text, with the \code{_R1.fastq}/\code{_R2.fastq} extension. If
 #' \code{compress.out = TRUE} the extension \code{.gz} is also added.
 #'
-#' The function then returns these file extensions in R.
+#' The function will return in R a table with the number of read-pairs for each
+#' sample. You may then add this as a new column to the existing
+#' \code{sample.tbl} by
+#' \code{full_join(sample.tbl, demultiplex.tbl, by = "SampleID")}, where
+#' \code{demultiplex.tbl} indicates the output from this function.
+#'
 #'
 #' @author Lars Snipen.
 #'
@@ -63,6 +68,8 @@ demultiplex <- function(sample.tbl, in.folder, out.folder, compress.out = TRUE,
   utbl <- sample.tbl %>%
     select(Rawfile_R1, Rawfile_R2) %>%
     distinct()
+  readpairs.tbl <- tibble(SampleID = sample.tbl$SampleID,
+                          n_readpairs = 0)
   for(i in 1:nrow(utbl)) {
     cat("   Reading raw file", utbl$Rawfile_R1[i], "...")
     R1.tbl <- readFastq(file.path(in.folder, utbl$Rawfile_R1[i])) %>%
@@ -87,7 +94,8 @@ demultiplex <- function(sample.tbl, in.folder, out.folder, compress.out = TRUE,
         rename(Header = R2.Header, Sequence = R2.Sequence, Quality = R2.Quality) %>%
         writeFastq(out.file = file.path(out.folder, str_c(sample.tbl$SampleID[idx[j]], out.ext[2])))
       cat("         found", nrow(tbl0), "read-pairs\n")
+      readpairs.tbl$n_readpairs[idx[j]] <- nrow(tbl0)
     }
   }
-  return(out.ext)
+  return(readpairs.tbl)
 }

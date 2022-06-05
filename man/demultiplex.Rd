@@ -29,7 +29,11 @@ The function will output the de-multiplexed fastq-files to the
 SampleID text, with the \code{_R1.fastq}/\code{_R2.fastq} extension. If
 \code{compress.out = TRUE} the extension \code{.gz} is also added.
 
-The function then returns these file extensions in R.
+The function will return in R a table with the number of read-pairs for each
+sample. You may then add this as a new column to the existing
+\code{sample.tbl} by
+\code{full_join(sample.tbl, demultiplex.tbl, by = "SampleID")}, where
+\code{demultiplex.tbl} indicates the output from this function.
 }
 \description{
 De-multiplexing Illumina data based on the extra forward barcode
