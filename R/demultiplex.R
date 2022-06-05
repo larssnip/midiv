@@ -39,6 +39,8 @@
 #' SampleID text, with the \code{_R1.fastq}/\code{_R2.fastq} extension. If
 #' \code{compress.out = TRUE} the extension \code{.gz} is also added.
 #'
+#' The function then returns these file extensions in R.
+#'
 #' @author Lars Snipen.
 #'
 #' @importFrom stringr str_c str_length
@@ -87,5 +89,5 @@ demultiplex <- function(sample.tbl, in.folder, out.folder, compress.out = TRUE,
       cat("         found", nrow(tbl0), "read-pairs\n")
     }
   }
-  return(TRUE)
+  return(out.ext)
 }

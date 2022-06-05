@@ -28,6 +28,8 @@ The function will output the de-multiplexed fastq-files to the
 \code{out.folder}. The name of each file consists of the corresponding
 SampleID text, with the \code{_R1.fastq}/\code{_R2.fastq} extension. If
 \code{compress.out = TRUE} the extension \code{.gz} is also added.
+
+The function then returns these file extensions in R.
 }
 \description{
 De-multiplexing Illumina data based on the extra forward barcode
