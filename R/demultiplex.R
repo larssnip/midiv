@@ -55,7 +55,7 @@
 #' @export readFasta
 #' @export writeFasta
 #'
-demultiplex <- function(sample.tbl, in.folder, out.folder, compress.out = FALSE,
+demultiplex <- function(sample.tbl, in.folder, out.folder, compress.out = TRUE,
                         pattern = "_R[12].fastq"){
   cat("De-multiplexing: ")
   in.folder <- normalizePath(in.folder)
