@@ -4,16 +4,10 @@
 \alias{demultiplex}
 \title{De-multiplexing fastq files}
 \usage{
-demultiplex(
-  sample.tbl,
-  in.folder,
-  out.folder,
-  compress.out = TRUE,
-  pattern = "_R[12].fastq"
-)
+demultiplex(metadata.tbl, in.folder, out.folder)
 }
 \arguments{
-\item{sample.tbl}{Table with data for each sample, see Details below.}
+\item{metadata.tbl}{Table with data for each sample, see Details below.}
 
 \item{in.folder}{Name of folder where raw fastq files are located.}
 
@@ -26,43 +20,43 @@ demultiplex(
 \value{
 The function will output the de-multiplexed fastq-files to the
 \code{out.folder}. The name of each file consists of the corresponding
-SampleID text, with the \code{_R1.fastq}/\code{_R2.fastq} extension. If
-\code{compress.out = TRUE} the extension \code{.gz} is also added.
+ProjectID_SequencingRunID_SampleID, with the extensions \code{_R1.fastq.gz}
+or \code{_R2.fastq.gz}.
 
 The function will return in R a table with the number of read-pairs for each
 sample. You may then add this as a new column to the existing
-\code{sample.tbl} by
-\code{full_join(sample.tbl, demultiplex.tbl, by = "SampleID")}, where
-\code{demultiplex.tbl} indicates the output from this function.
+\code{metadata.tbl} by
+\code{full_join(metadata.tbl, demultiplex.tbl, by = c("ProjectID", "SequencingRunID", "SampleID")},
+where \code{demultiplex.tbl} indicates the output from this function.
 }
 \description{
 De-multiplexing Illumina data based on the extra forward barcode
 used by MiDiv lab.
 }
 \details{
-The input \code{sample.tbl} must be a table (tibble or data.frame)
-with one row for each sample. It must follow the MiDiv sample_table standard
+The input \code{metadata.tbl} must be a table (tibble or data.frame)
+with one row for each sample. It must follow the MiDiv metadata table standard
 format. The columns used by this function are:
+* ProjectID
+* SequencingRunID
 * SampleID
 * Rawfile_R1
 * Rawfile_R2
 * Barcode
 
-The SampleID should be a short text to uniquely identify each sample. It will
-be used to form the new fastq filenames, so avoid using symbols not recommended
-in filenames (e.g. space, slash). It is also wise to have a letter, not an integer,
-as the first symbol in such SampleID texts.
+The ProjectID, SequencingRunID and SampleID should all be a short text
+(sampleID may be just an integer). The names of the de-multiplexed fastq files will
+follow the format: ProjectID_SequencingRunID_SampleID_Rx.fastq.gz, where x is 1 or 2,
+so avoid using symbols not recommended in filenames (e.g. space, slash).
 
-Demultiplexing means extracting subsets of reads from raw fastq files, and saving
-each subset on new fastq files. Each subset is identified by a barcode
+De-multiplexing means extracting subsets of reads from raw fastq files, those
+named in columns Rawfile_R1 and Rawfile_R2 (if single-end reads, only Rawfile_R1).
+The subset of read-pairs for each sample is identified by a barcode
 sequence, and this must be listed in the Barcode column. The Barcode
 sequence is matched at the start of the R1-reads only.
 
-The original fastq files must all be in the \code{in.folder}. These files may
-be compressed (.gz). The \code{pattern} is matched to all file names in this
-folder, and should give a match against all raw fastq files. All new fastq
-files written to \code{out.folder} will
-also be compressed (.gz) if \code{compress.out = TRUE}.
+The files listed in Rawfile_R1 and Rawfile_R2 must all be in the \code{in.folder}.
+These files may be compressed (.gz).
 }
 \author{
 Lars Snipen.
