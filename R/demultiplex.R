@@ -48,12 +48,11 @@
 #'
 #' @author Lars Snipen.
 #'
-#' @importFrom stringr str_c str_length
-#' @importFrom dplyr filter %>% if_else select mutate rename bind_cols
+#' @importFrom stringr str_c str_length str_detect
+#' @importFrom dplyr %>% distinct select filter mutate rename bind_cols
 #' @importFrom microseq readFastq writeFastq
 #'
-#' @export readFasta
-#' @export writeFasta
+#' @export demultiplex
 #'
 demultiplex <- function(metadata.tbl, in.folder, out.folder){
   cat("De-multiplexing: ")

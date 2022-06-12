@@ -3,8 +3,8 @@ The midiv package
 
 # Installation
 
-This small R package contains the MiDiv lab demultiplexing for Illumina
-sequence data.
+This small R package contains some functions used in the MiDiv-lab
+bioinformatics pipelines.
 
 Install the package from GitHub by
 
