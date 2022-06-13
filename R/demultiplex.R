@@ -69,15 +69,15 @@ demultiplex <- function(metadata.tbl, in.folder, out.folder){
                           SampleID = metadata.tbl$SampleID,
                           n_readpairs = 0)
   for(i in 1:nrow(utbl)) {
-    cat("   Reading raw file", utbl$Rawfile_R1[i], "...")
+    cat("   Reading raw file", utbl$Rawfile_R1[i], "...\n")
     R1.tbl <- readFastq(file.path(in.folder, utbl$Rawfile_R1[i])) %>%
       rename(R1.Header = Header, R1.Sequence = Sequence, R1.Quality = Quality)
-    cat("   Reading raw file", utbl$Rawfile_R2[i], "...")
+    cat("   Reading raw file", utbl$Rawfile_R2[i], "...\n")
     R2.tbl <- readFastq(file.path(in.folder, utbl$Rawfile_R2[i])) %>%
       rename(R2.Header = Header, R2.Sequence = Sequence, R2.Quality = Quality)
     tbl <- bind_cols(R1.tbl, R2.tbl)
     idx <- which(metadata.tbl$Rawfile_R1 == utbl$Rawfile_R1[i] & metadata.tbl$Rawfile_R2 == utbl$Rawfile_R2[i])
-    cat(" found", length(idx), "samples with reads from these raw files:\n")
+    cat("   found", length(idx), "samples with reads from these raw files:\n")
     for(j in 1:length(idx)){
       cat("      Barcode", metadata.tbl$Barcode[idx[j]], "...\n")
       nc <- str_length(metadata.tbl$Barcode[idx[j]])
