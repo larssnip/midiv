@@ -55,7 +55,7 @@
 #' @export demultiplex
 #'
 demultiplex <- function(metadata.tbl, in.folder, out.folder){
-  cat("De-multiplexing: ")
+  cat("De-multiplexing:\n")
   in.folder <- normalizePath(in.folder)
   out.folder <- normalizePath(out.folder)
   cnames <- c("ProjectID", "SequencingRunID", "SampleID", "Rawfile_R1", "Rawfile_R2", "Barcode")
