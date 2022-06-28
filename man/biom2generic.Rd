@@ -4,7 +4,7 @@
 \alias{biom2generic}
 \title{Converts biom-object}
 \usage{
-biom2generic(biom.file, out.folder = ".")
+biom2generic(biom.file)
 }
 \arguments{
 \item{biom.file}{Name of a biom-file output from DEBLUR,}

@@ -25,18 +25,18 @@
 #'
 #' @export biom2generic
 #'
-biom2generic <- function(biom.file, out.folder = "."){
+biom2generic <- function(biom.file){
   biom.obj <- read_biom(normalizePath(biom.file))
   readcount.mat <- matrix(unlist(biom.obj$data),
                           nrow = length(biom.obj$rows),
                           ncol = length(biom.obj$columns),
                           byrow = T)
   colnames(readcount.mat) <- sapply(biom.obj$columns, function(x){x$id})
-  readcount.tbl <- data.frame(OTU = paste0("DBLR", 1:length(biom.obj$rows)))
+  readcount.tbl <- data.frame(DBLR = paste0("DBLR", 1:length(biom.obj$rows)))
   readcount.tbl <- cbind(readcount.tbl, as.data.frame(readcount.mat))
-  write.table(readcount.tbl, file = file.path(out.folder, "readcount_table.txt"),
+  write.table(readcount.tbl, file = "readcounts_deblur.txt",
               quote = F, sep = "\t", row.names = F, col.names = T)
   centroids.fsa <- data.frame(Header = paste0("DBLR", 1:length(biom.obj$rows)),
                               Sequence = sapply(biom.obj$rows, function(x){x$id}))
-  writeFasta(centroids.fsa, out.file = file.path(out.folder, "centroids.fasta"))
+  writeFasta(centroids.fsa, out.file = "centroids_deblur.fasta")
 }
