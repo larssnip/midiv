@@ -50,7 +50,7 @@ vsearch_update_metadata <- function(metadata.file, tmp.folder = "tmp_vsearch",
     cat(".")
   }
   cat("\nReading readcounts from ", readcounts.file.OTU, "...\n")
-  rc.tbl <- read_delim(readcounts.file.OTU, delim = "\t")
+  rc.tbl <- suppressMessages(read_delim(readcounts.file.OTU, delim = "\t"))
   readcount.mat <- rc.tbl %>%
     select(-1) %>%
     as.matrix() %>%
@@ -61,7 +61,7 @@ vsearch_update_metadata <- function(metadata.file, tmp.folder = "tmp_vsearch",
                                    SampleID = rownames(readcount.mat)),
                             by = "SampleID")
   cat("Reading readcounts from ", readcounts.file.ZOTU, "...\n")
-  rc.tbl <- read_delim(readcounts.file.ZOTU, delim = "\t")
+  rc.tbl <- suppressMessages(read_delim(readcounts.file.ZOTU, delim = "\t"))
   readcount.mat <- rc.tbl %>%
     select(-1) %>%
     as.matrix() %>%
