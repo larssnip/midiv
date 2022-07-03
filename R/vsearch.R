@@ -50,26 +50,28 @@ vsearch_update_metadata <- function(metadata.file, tmp.folder = "tmp_vsearch",
     cat(".")
   }
   cat("\nReading readcounts from ", readcounts.file.OTU, "...\n")
-  rc.tbl <- suppressMessages(read_delim(readcounts.file.OTU, delim = "\t"))
+  rc.tbl <- suppressMessages(read_delim(readcounts.file.OTU, delim = "\t")) %>%
+    mutate(SampleID = as.character(SampleID))
   readcount.mat <- rc.tbl %>%
     select(-1) %>%
     as.matrix() %>%
     t() %>%
     set_colnames(rc.tbl$`#OTU ID`)
   metadata.tbl <- left_join(metadata.tbl,
-                            tibble(n_vsearch_reads_OTU = rowSums(readcount.mat),
-                                   SampleID = rownames(readcount.mat)),
+                            data.frame(n_vsearch_reads_OTU = rowSums(readcount.mat),
+                                       SampleID = rownames(readcount.mat)),
                             by = "SampleID")
   cat("Reading readcounts from ", readcounts.file.ZOTU, "...\n")
-  rc.tbl <- suppressMessages(read_delim(readcounts.file.ZOTU, delim = "\t"))
+  rc.tbl <- suppressMessages(read_delim(readcounts.file.ZOTU, delim = "\t")) %>%
+    mutate(SampleID = as.character(SampleID))
   readcount.mat <- rc.tbl %>%
     select(-1) %>%
     as.matrix() %>%
     t() %>%
     set_colnames(rc.tbl$`#OTU ID`)
   metadata.tbl <- left_join(metadata.tbl,
-                            tibble(n_vsearch_reads_ZOTU = rowSums(readcount.mat),
-                                   SampleID = rownames(readcount.mat)),
+                            data.frame(n_vsearch_reads_ZOTU = rowSums(readcount.mat),
+                                       SampleID = rownames(readcount.mat)),
                             by = "SampleID")
   cat("Writing to file ", metadata.file, "\n")
   write_delim(metadata.tbl, delim = "\t", file = metadata.file)
