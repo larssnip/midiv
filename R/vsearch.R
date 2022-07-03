@@ -35,18 +35,22 @@
 vsearch_update_metadata <- function(metadata.file, tmp.folder = "tmp_vsearch",
                                     readcounts.file.OTU = "readcounts_vsearch_OTU.txt",
                                     readcounts.file.ZOTU = "readcounts_vsearch_ZOTU.txt"){
+  cat("Reading the metadata file ", metadata.file, "...\n")
   metadata.tbl <- suppressMessages(read_delim(metadata.file, delim = "\t")) %>%
     mutate(n_vsearch_merged = 0)
   if(exists("n_vsearch_reads_OTU", metadata.tbl)) metadata.tbl <- select(metadata.tbl, -n_vsearch_reads_OTU)
   if(exists("n_vsearch_reads_ZOTU", metadata.tbl)) metadata.tbl <- select(metadata.tbl, -n_vsearch_reads_ZOTU)
+  cat("Looping over samples to collect number of merged reads")
   for(i in 1:nrow(metadata.tbl)){
     file.stem <- str_c(metadata.tbl$ProjectID[i], "_",
                        metadata.tbl$SequencingRunID[i], "_",
                        metadata.tbl$SampleID[i])
     fq <- readFastq(file.path(tmp.folder, str_c(file.stem, ".fq")))
     metadata.tbl$n_vsearch_merged[i] <- nrow(fq)
+    cat(".")
   }
-  rc.tbl <- read_delim(readcount.file.OTU, delim = "\t")
+  cat("\nReading readcounts from ", readcounts.file.OTU, "...\n")
+  rc.tbl <- read_delim(readcounts.file.OTU, delim = "\t")
   readcount.mat <- rc.tbl %>%
     select(-1) %>%
     as.matrix() %>%
@@ -56,6 +60,7 @@ vsearch_update_metadata <- function(metadata.file, tmp.folder = "tmp_vsearch",
                             tibble(n_vsearch_reads_OTU = rowSums(readcount.mat),
                                    SampleID = rownames(readcount.mat)),
                             by = "SampleID")
+  cat("Reading readcounts from ", readcounts.file.ZOTU, "...\n")
   rc.tbl <- read_delim(readcount.file.ZOTU, delim = "\t")
   readcount.mat <- rc.tbl %>%
     select(-1) %>%
@@ -66,5 +71,6 @@ vsearch_update_metadata <- function(metadata.file, tmp.folder = "tmp_vsearch",
                             tibble(n_vsearch_reads_ZOTU = rowSums(readcount.mat),
                                    SampleID = rownames(readcount.mat)),
                             by = "SampleID")
+  cat("Writing to file ", metadata.file, "\n")
   write_delim(metadata.tbl, delim = "\t", file = metadata.file)
 }
