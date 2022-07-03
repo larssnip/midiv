@@ -37,7 +37,8 @@ vsearch_update_metadata <- function(metadata.file, tmp.folder = "tmp_vsearch",
                                     readcounts.file.ZOTU = "readcounts_vsearch_ZOTU.txt"){
   cat("Reading the metadata file ", metadata.file, "...\n")
   metadata.tbl <- suppressMessages(read_delim(metadata.file, delim = "\t")) %>%
-    mutate(n_vsearch_merged = 0)
+    mutate(n_vsearch_merged = 0) %>%
+    mutate(SampleID = as.character(SampleID))
   if(exists("n_vsearch_reads_OTU", metadata.tbl)) metadata.tbl <- select(metadata.tbl, -n_vsearch_reads_OTU)
   if(exists("n_vsearch_reads_ZOTU", metadata.tbl)) metadata.tbl <- select(metadata.tbl, -n_vsearch_reads_ZOTU)
   cat("Looping over samples to collect number of merged reads")
@@ -50,8 +51,7 @@ vsearch_update_metadata <- function(metadata.file, tmp.folder = "tmp_vsearch",
     cat(".")
   }
   cat("\nReading readcounts from ", readcounts.file.OTU, "...\n")
-  rc.tbl <- suppressMessages(read_delim(readcounts.file.OTU, delim = "\t")) %>%
-    mutate(SampleID = as.character(SampleID))
+  rc.tbl <- suppressMessages(read_delim(readcounts.file.OTU, delim = "\t"))
   readcount.mat <- rc.tbl %>%
     select(-1) %>%
     as.matrix() %>%
@@ -62,8 +62,7 @@ vsearch_update_metadata <- function(metadata.file, tmp.folder = "tmp_vsearch",
                                        SampleID = rownames(readcount.mat)),
                             by = "SampleID")
   cat("Reading readcounts from ", readcounts.file.ZOTU, "...\n")
-  rc.tbl <- suppressMessages(read_delim(readcounts.file.ZOTU, delim = "\t")) %>%
-    mutate(SampleID = as.character(SampleID))
+  rc.tbl <- suppressMessages(read_delim(readcounts.file.ZOTU, delim = "\t"))
   readcount.mat <- rc.tbl %>%
     select(-1) %>%
     as.matrix() %>%
