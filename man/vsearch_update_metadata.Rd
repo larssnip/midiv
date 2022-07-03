@@ -4,12 +4,21 @@
 \alias{vsearch_update_metadata}
 \title{Updating metadata file}
 \usage{
-vsearch_update_metadata(metadata.file, tmp.folder)
+vsearch_update_metadata(
+  metadata.file,
+  tmp.folder = "tmp_vsearch",
+  readcounts.file.OTU = "readcounts_vsearch_OTU.txt",
+  readcounts.file.ZOTU = "readcounts_vsearch_ZOTU.txt"
+)
 }
 \arguments{
-\item{metadata.file}{Full name of file with metadata (text file)..}
+\item{metadata.file}{Full name of file with metadata (text file).}
 
 \item{tmp.folder}{Name of folder where fastq files are found.}
+
+\item{readcounts.file.OTU}{Name of file with OTU readcounts table.}
+
+\item{readcounts.file.ZOTU}{Name of file with ZOTU readcounts table.}
 }
 \value{
 The function will update the content of the file \code{metadata.file}.
@@ -29,7 +38,7 @@ The names of the files in \code{tmp.folder} should all follow
 the format: ProjectID_SequencingRunID_SampleID.fq.
 
 This function will read the files and update the metadata file with the columns
-n_vsearch_merged, n_vsearch_reads_OTU and n_vsearch_reads_ZOTU
+n_vsearch_merged, n_vsearch_reads_OTU and n_vsearch_reads_ZOTU.
 }
 \author{
 Lars Snipen.

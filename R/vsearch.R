@@ -3,9 +3,11 @@
 #'
 #' @description Updating the metadata file with information on VSEARCH processing.
 #'
-#' @param metadata.file Full name of file with metadata (text file)..
+#' @param metadata.file Full name of file with metadata (text file).
 #' @param tmp.folder	Name of folder where fastq files are found.
-
+#' @param readcounts.file.OTU Name of file with OTU readcounts table.
+#' @param readcounts.file.ZOTU Name of file with ZOTU readcounts table.
+#'
 #' @details The \code{metadata.file} must be a text file with a table
 #' with one row for each sample. It must follow the MiDiv metadata table standard
 #' format. The columns used by this function are:
@@ -17,7 +19,7 @@
 #' the format: ProjectID_SequencingRunID_SampleID.fq.
 #'
 #' This function will read the files and update the metadata file with the columns
-#' n_vsearch_merged, n_vsearch_reads_OTU and n_vsearch_reads_ZOTU
+#' n_vsearch_merged, n_vsearch_reads_OTU and n_vsearch_reads_ZOTU.
 #'
 #' @return The function will update the content of the file \code{metadata.file}.
 #'
@@ -30,7 +32,9 @@
 #'
 #' @export vsearch_update_metadata
 #'
-vsearch_update_metadata <- function(metadata.file, tmp.folder){
+vsearch_update_metadata <- function(metadata.file, tmp.folder = "tmp_vsearch",
+                                    readcounts.file.OTU = "readcounts_vsearch_OTU.txt",
+                                    readcounts.file.ZOTU = "readcounts_vsearch_ZOTU.txt"){
   metadata.tbl <- suppressMessages(read_delim(metadata.file, delim = "\t")) %>%
     mutate(n_vsearch_merged = 0)
   if(exists("n_vsearch_reads_OTU", metadata.tbl)) metadata.tbl <- select(metadata.tbl, -n_vsearch_reads_OTU)
@@ -42,25 +46,25 @@ vsearch_update_metadata <- function(metadata.file, tmp.folder){
     fq <- readFastq(file.path(tmp.folder, str_c(file.stem, ".fq")))
     metadata.tbl$n_vsearch_merged[i] <- nrow(fq)
   }
-  rc.tbl <- read_delim("readcounts_vsearch_OTU.txt", delim = "\t")
+  rc.tbl <- read_delim(readcount.file.OTU, delim = "\t")
   readcount.mat <- rc.tbl %>%
     select(-1) %>%
     as.matrix() %>%
     t() %>%
     set_colnames(rc.tbl$`#OTU ID`)
   metadata.tbl <- left_join(metadata.tbl,
-                            data.frame(n_vsearch_reads_OTU = rowSums(readcount.mat),
-                                       SampleID = rownames(readcount.mat)),
+                            tibble(n_vsearch_reads_OTU = rowSums(readcount.mat),
+                                   SampleID = rownames(readcount.mat)),
                             by = "SampleID")
-  rc.tbl <- read_delim("readcounts_vsearch_ZOTU.txt", delim = "\t")
+  rc.tbl <- read_delim(readcount.file.ZOTU, delim = "\t")
   readcount.mat <- rc.tbl %>%
     select(-1) %>%
     as.matrix() %>%
     t() %>%
     set_colnames(rc.tbl$`#OTU ID`)
   metadata.tbl <- left_join(metadata.tbl,
-                            data.frame(n_vsearch_reads_ZOTU = rowSums(readcount.mat),
-                                       SampleID = rownames(readcount.mat)),
+                            tibble(n_vsearch_reads_ZOTU = rowSums(readcount.mat),
+                                   SampleID = rownames(readcount.mat)),
                             by = "SampleID")
   write_delim(metadata.tbl, delim = "\t", file = metadata.file)
 }
