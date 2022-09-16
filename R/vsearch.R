@@ -43,10 +43,7 @@ vsearch_update_metadata <- function(metadata.file, tmp.folder = "tmp_vsearch",
   if(exists("n_vsearch_reads_ZOTU", metadata.tbl)) metadata.tbl <- select(metadata.tbl, -n_vsearch_reads_ZOTU)
   cat("Looping over samples to collect number of merged reads")
   for(i in 1:nrow(metadata.tbl)){
-    file.stem <- str_c(metadata.tbl$ProjectID[i], "_",
-                       metadata.tbl$SequencingRunID[i], "_",
-                       metadata.tbl$SampleID[i])
-    fq <- readFastq(file.path(tmp.folder, str_c(file.stem, ".fq")))
+    fq <- readFastq(file.path(tmp.folder, str_c(metadata.tbl$SampleID[i], ".fq")))
     metadata.tbl$n_vsearch_merged[i] <- nrow(fq)
     cat(".")
   }
