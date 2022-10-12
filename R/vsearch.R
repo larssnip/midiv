@@ -11,12 +11,10 @@
 #' @details The \code{metadata.file} must be a text file with a table
 #' with one row for each sample. It must follow the MiDiv metadata table standard
 #' format. The columns used by this function are:
-#' * ProjectID
-#' * SequencingRunID
 #' * SampleID
 #'
 #' The names of the files in \code{tmp.folder} should all follow
-#' the format: ProjectID_SequencingRunID_SampleID.fq.
+#' the format: SampleID.fq.
 #'
 #' This function will read the files and update the metadata file with the columns
 #' n_vsearch_merged, n_vsearch_reads_OTU and n_vsearch_reads_ZOTU.
