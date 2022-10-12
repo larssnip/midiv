@@ -3,20 +3,26 @@
 #'
 #' @description Creating a an object similar to a phyloseq-object, but as an open list.
 #'
-#' @param metadata.file Full name of text-file with metadata.
-#' @param readcounts.file Full name of text-file with readcount data.
-#' @param centroids.file.Full name of fasta-file with sequences.
-#' @param taxonomy.file Full name of text-file with the taxonomy table results (optional).
+#' @param metadata.file Full name of text-file with sample metadata.
+#' @param readcounts.file Full name of text-file with readcounts data, assume samples in the columns.
+#' @param centroids.file Full name of fasta-file with OTU sequences.
+#' @param taxonomy.file Full name of text-file with the OTU taxonomy table results (optional).
+#' @param sintax.threshold A value between 0.0 and 1.0 indicating confidence threshold for the taxonomy (optional).
 #'
 #' @details This function reads the input files, and store their content in a
 #' \code{list} that we refer to as an *openPS object*.
 #'
+#' If a \code{taxonomy.file} is specified, the \code{sintax.threshold} will be used to assign
+#' all classification with a score below this threshold to \code{"unclassified"} in the \code{tax_table.mat}.
+#'
 #' @return A list with the elements:
 #'
-#' * sample_data.tbl - a data.frame with one row for each sample. Its rownames are the SampleID's.
-#' * otu_table.mat - a matrix with the readcounts. These may later be transformed. The samples are in the columns, the OTUs in the rows.
-#' * sequence.tbl - a data.frame with the OTU sequences (see \code{\link{readFasta}}).
-#' * tax_table.mat - a matrix with the taxonomy, one row for each OTU.
+#' \itemize{
+#'   \item{\code{sample_data.tbl}}{ a data.frame with one row for each sample. Its rownames are the SampleID's.}
+#'   \item{\code{otu_table.mat}}{ a matrix with the readcounts. These may later be transformed. The samples are in the columns, the OTUs in the rows.}
+#'   \item{\code{sequence.tbl}}{ a data.frame with the OTU sequences (see \code{\link{readFasta}}).}
+#'   \item{\code{tax_table.mat}}{ a matrix with the taxonomy, one row for each OTU.}
+#' }
 #'
 #' @author Lars Snipen.
 #'
@@ -26,7 +32,7 @@
 #' @export openPS
 #'
 openPS <- function(metadata.file, readcount.file, centroids.file,
-                            taxonomy.file = NULL, sintax.threshold = 0.8){
+                            taxonomy.file = NULL, sintax.threshold = 0.0){
   meta.tbl <- read.table(metadata.file, header = T, sep = "\t")
   rownames(meta.tbl) <- meta.tbl$SampleID
   rc.tbl <- read.table(readcount.file, header = T, sep = "\t", comment.char = "")
@@ -66,9 +72,9 @@ openPS <- function(metadata.file, readcount.file, centroids.file,
 #' @param openPS.obj An openPS object, see \code{\link{openPS}}.
 #'
 #' @details This function converts an openPS object, which is a simple
-#' \code{list}, to a \code{phyloseq} object from the \code{phyloseq} R package.
+#' \code{list}, to a \code{\link{phyloseq}} object from the \code{phyloseq} R package.
 #'
-#' @return A \code{phyloseq} object.
+#' @return A \code{\link{phyloseq}} object.
 #'
 #' @author Lars Snipen.
 #'

@@ -10,14 +10,14 @@ openPS2phyloseq(openPS.obj)
 \item{openPS.obj}{An openPS object, see \code{\link{openPS}}.}
 }
 \value{
-A \code{phyloseq} object.
+A \code{\link{phyloseq}} object.
 }
 \description{
 Creating a phyloseq object from an openPS object.
 }
 \details{
 This function converts an openPS object, which is a simple
-\code{list}, to a \code{phyloseq} object from the \code{phyloseq} R package.
+\code{list}, to a \code{\link{phyloseq}} object from the \code{phyloseq} R package.
 }
 \author{
 Lars Snipen.

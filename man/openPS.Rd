@@ -9,25 +9,29 @@ openPS(
   readcount.file,
   centroids.file,
   taxonomy.file = NULL,
-  sintax.threshold = 0.8
+  sintax.threshold = 0
 )
 }
 \arguments{
-\item{metadata.file}{Full name of text-file with metadata.}
+\item{metadata.file}{Full name of text-file with sample metadata.}
 
-\item{taxonomy.file}{Full name of text-file with the taxonomy table results (optional).}
+\item{centroids.file}{Full name of fasta-file with OTU sequences.}
 
-\item{readcounts.file}{Full name of text-file with readcount data.}
+\item{taxonomy.file}{Full name of text-file with the OTU taxonomy table results (optional).}
 
-\item{centroids.file.Full}{name of fasta-file with sequences.}
+\item{sintax.threshold}{A value between 0.0 and 1.0 indicating confidence threshold for the taxonomy (optional).}
+
+\item{readcounts.file}{Full name of text-file with readcounts data, assume samples in the columns.}
 }
 \value{
 A list with the elements:
 
-* sample_data.tbl - a data.frame with one row for each sample. Its rownames are the SampleID's.
-* otu_table.mat - a matrix with the readcounts. These may later be transformed. The samples are in the columns, the OTUs in the rows.
-* sequence.tbl - a data.frame with the OTU sequences (see \code{\link{readFasta}}).
-* tax_table.mat - a matrix with the taxonomy, one row for each OTU.
+\itemize{
+  \item{\code{sample_data.tbl}}{ a data.frame with one row for each sample. Its rownames are the SampleID's.}
+  \item{\code{otu_table.mat}}{ a matrix with the readcounts. These may later be transformed. The samples are in the columns, the OTUs in the rows.}
+  \item{\code{sequence.tbl}}{ a data.frame with the OTU sequences (see \code{\link{readFasta}}).}
+  \item{\code{tax_table.mat}}{ a matrix with the taxonomy, one row for each OTU.}
+}
 }
 \description{
 Creating a an object similar to a phyloseq-object, but as an open list.
@@ -35,6 +39,9 @@ Creating a an object similar to a phyloseq-object, but as an open list.
 \details{
 This function reads the input files, and store their content in a
 \code{list} that we refer to as an *openPS object*.
+
+If a \code{taxonomy.file} is specified, the \code{sintax.threshold} will be used to assign
+all classification with a score below this threshold to \code{"unclassified"} in the \code{tax_table.mat}.
 }
 \author{
 Lars Snipen.
