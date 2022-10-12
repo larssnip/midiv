@@ -26,6 +26,7 @@
 #'
 #' @author Lars Snipen.
 #'
+#' @importFrom readr read_delim
 #' @importFrom dplyr %>% select mutate if_else
 #' @importFrom microseq readFasta
 #'
@@ -33,10 +34,10 @@
 #'
 openPS <- function(metadata.file, readcounts.file, centroids.file,
                             taxonomy.file = NULL, sintax.threshold = 0.0){
-  meta.tbl <- read_delim(metadata.file, delim = "\t") %>%
+  meta.tbl <- suppressMessages(read_delim(metadata.file, delim = "\t")) %>%
     as.data.frame
   rownames(meta.tbl) <- meta.tbl$SampleID
-  rc.tbl <- read_delim(readcounts.file, delim = "\t") %>%
+  rc.tbl <- suppressMessages(read_delim(readcounts.file, delim = "\t")) %>%
     as.data.frame()
   rc.mat <- rc.tbl %>%
     select(-1) %>%
