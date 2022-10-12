@@ -6,7 +6,7 @@
 \usage{
 openPS(
   metadata.file,
-  readcount.file,
+  readcounts.file,
   centroids.file,
   taxonomy.file = NULL,
   sintax.threshold = 0
@@ -15,13 +15,13 @@ openPS(
 \arguments{
 \item{metadata.file}{Full name of text-file with sample metadata.}
 
+\item{readcounts.file}{Full name of text-file with readcounts data, assume samples in the columns.}
+
 \item{centroids.file}{Full name of fasta-file with OTU sequences.}
 
 \item{taxonomy.file}{Full name of text-file with the OTU taxonomy table results (optional).}
 
 \item{sintax.threshold}{A value between 0.0 and 1.0 indicating confidence threshold for the taxonomy (optional).}
-
-\item{readcounts.file}{Full name of text-file with readcounts data, assume samples in the columns.}
 }
 \value{
 A list with the elements:

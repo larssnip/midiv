@@ -31,7 +31,7 @@
 #'
 #' @export openPS
 #'
-openPS <- function(metadata.file, readcount.file, centroids.file,
+openPS <- function(metadata.file, readcounts.file, centroids.file,
                             taxonomy.file = NULL, sintax.threshold = 0.0){
   meta.tbl <- read.table(metadata.file, header = T, sep = "\t")
   rownames(meta.tbl) <- meta.tbl$SampleID
