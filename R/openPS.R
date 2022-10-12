@@ -33,9 +33,11 @@
 #'
 openPS <- function(metadata.file, readcounts.file, centroids.file,
                             taxonomy.file = NULL, sintax.threshold = 0.0){
-  meta.tbl <- read.table(metadata.file, header = T, sep = "\t")
+  meta.tbl <- read_delim(metadata.file, delim = "\t") %>%
+    as.data.frame
   rownames(meta.tbl) <- meta.tbl$SampleID
-  rc.tbl <- read.table(readcounts.file, header = T, sep = "\t", comment.char = "")
+  rc.tbl <- read_delim(readcounts.file, delim = "\t") %>%
+    as.data.frame()
   rc.mat <- rc.tbl %>%
     select(-1) %>%
     as.matrix()
