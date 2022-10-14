@@ -34,7 +34,7 @@ A list with the elements:
 }
 }
 \description{
-Creating a an object similar to a phyloseq-object, but as an open list.
+Creating an object similar to a phyloseq-object, but as an open list.
 }
 \details{
 This function reads the input files, and store their content in a

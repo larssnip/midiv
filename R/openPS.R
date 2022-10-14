@@ -1,7 +1,7 @@
 #' @name openPS
 #' @title Creating a phyloseq-like object
 #'
-#' @description Creating a an object similar to a phyloseq-object, but as an open list.
+#' @description Creating an object similar to a phyloseq-object, but as an open list.
 #'
 #' @param metadata.file Full name of text-file with sample metadata.
 #' @param readcounts.file Full name of text-file with readcounts data, assume samples in the columns.
@@ -33,20 +33,35 @@
 #' @export openPS
 #'
 openPS <- function(metadata.file, readcounts.file, centroids.file,
-                            taxonomy.file = NULL, sintax.threshold = 0.0){
-  meta.tbl <- suppressMessages(read_delim(metadata.file, delim = "\t")) %>%
-    as.data.frame
-  rownames(meta.tbl) <- meta.tbl$SampleID
-  rc.tbl <- suppressMessages(read_delim(readcounts.file, delim = "\t")) %>%
+                   taxonomy.file = NULL, sintax.threshold = 0.0){
+  ## The sample metadata
+  metadata.tbl <- suppressMessages(read_delim(metadata.file, delim = "\t")) %>%
     as.data.frame()
-  rc.mat <- rc.tbl %>%
+  rownames(metadata.tbl) <- metadata.tbl$SampleID # rownames on a table is silly, but required by phyloseq
+
+  ## The readcounts
+  readcount.tbl <- suppressMessages(read_delim(readcounts.file, delim = "\t")) %>%
+    as.data.frame()
+  readcount.mat <- readcount.tbl %>%
     select(-1) %>%
     as.matrix()
-  rownames(rc.mat) <- rc.tbl[,1]
-  centroids.tbl <- readFasta(centroids.file)
-  openPS.obj <- list(sample_data.tbl = meta.tbl,
-                     otu_table.mat = rc.mat,
-                     sequence.tbl = centroids.tbl)
+  rownames(readcount.mat) <- readcount.tbl[,1]
+
+  ## The sequences
+  sequence.tbl <- readFasta(centroids.file)
+
+  ## Ensure same ordering
+  idx <- match(rownames(metadata.tbl), colnames(readcount.mat))
+  if(sum(is.na(idx)) > 0) stop("The SampleID's in ", metadata.file, "do not correspond to those in ", readcounts.file)
+  readcount.mat <- readcount.mat[,idx]
+  idx <- match(sequence.tbl$Header, rownames(readcount.mat))
+  if(sum(is.na(idx)) > 0) stop("The OTU's in ", centroids.file, "do not correspond to those in ", readcounts.file)
+  readcount.mat <- readcount.mat[idx,]
+
+  ## Create list
+  openPS.obj <- list(sample_data.tbl = metadata.tbl,
+                     otu_table.mat = readcount.mat,
+                     sequence.tbl = sequence.tbl)
   if(!is.null(taxonomy.file)){
     tax.tbl <- read.table(taxonomy.file, header = T, sep = "\t") %>%
       mutate(species = as.character(species)) %>%
@@ -62,6 +77,12 @@ openPS <- function(metadata.file, readcounts.file, centroids.file,
       select(-1) %>%
       as.matrix()
     rownames(tax.mat) <- tax.tbl[,1]
+
+    ## Ensure same ordering
+    idx <- match(rownames(readcount.mat), rownames(tax.mat))
+    if(sum(is.na(idx)) > 0) stop("The OTU's in ", taxonomy.file, "do not correspond to those in ", readcounts.file)
+    tax.mat <- tax.mat[idx,]
+
     openPS.obj$tax_table.mat <- tax.mat
   }
   return(openPS.obj)
