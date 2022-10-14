@@ -7,7 +7,7 @@ Author: Lars Snipen
 Maintainer: Lars Snipen <lars.snipen@nmbu.no>
 Description: Some special functions needed in MiDiv-lab pipelines.
 License: GPL-2
-Depends: R (>= 4.0.0), microseq, stringr, dplyr, readr, biomformat, magrittr, phyloseq
+Depends: R (>= 4.0.0), microseq, stringr, dplyr, readr, biomformat, magrittr, phyloseq, vegan
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.1

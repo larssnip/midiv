@@ -86,6 +86,8 @@ min_var_down_sampling <- function(sample.readcounts, size = sum(sample.readcount
 #'
 #' @examples
 #'
+#' @importFrom vegan rarecurve
+#'
 #' @export rarefaction_curves
 #'
 rarefaction_curves <- function(phyloseq.object, step = 100, plot = TRUE){
