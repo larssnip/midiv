@@ -87,12 +87,14 @@ min_var_down_sampling <- function(sample.readcounts, size = sum(sample.readcount
 #' @examples
 #'
 #' @importFrom vegan rarecurve
+#' @importFrom ggplot2 ggplot geom_line labs
+#' @importFrom dplyr rename
 #'
 #' @export rarefaction_curves
 #'
 rarefaction_curves <- function(phyloseq.object, step = 100, plot = TRUE){
-  otu.mat <- otu_table(phyloseq.object)
-  rar.tbl <- rarecurve(t(otu.mat), step = step, tidy = T) %>%
+  otu.tbl <- as.data.frame(otu_table(phyloseq.object))
+  rar.tbl <- rarecurve(t(otu.tbl), step = step, tidy = T) %>%
     rename(Sample = Site, Reads = Sample, OTUs = Species)
   if(plot){
     fig <- ggplot(rar.tbl) +
