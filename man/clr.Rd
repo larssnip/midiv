@@ -39,7 +39,7 @@ The main reason this takes a vector as input, not a full matrix, is that
 readcount data are stored in several ways, bot in tables and matrices. Also,
 having a per-sample oriented implementation makes it straightforward to use
 this in conjunction with the \code{phyloseq} R package, and the function
-\code{\link{}}
+\code{\link{transform_sample_counts}}
 }
 \references{
 Aitchison J. The Statistical Analysis of Compositional Data. London, UK: Chapman & Hall; 1986.

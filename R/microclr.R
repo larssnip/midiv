@@ -29,7 +29,7 @@
 #' readcount data are stored in several ways, bot in tables and matrices. Also,
 #' having a per-sample oriented implementation makes it straightforward to use
 #' this in conjunction with the \code{phyloseq} R package, and the function
-#' \code{\link{}}
+#' \code{\link{transform_sample_counts}}
 #'
 #' @return A vector of same size as the input, but with transformed readcounts.
 #'
