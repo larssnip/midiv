@@ -43,6 +43,7 @@
 #'
 clr <- function(sample.readcounts, n.pseudo = 1){
   sample.readcounts <- sample.readcounts + n.pseudo
+  sample.rel.abd <- sample.readcounts / sum(sample.readcounts)
   lc <- log2(sample.rel.abd)
   clr.values <- lc - mean(lc)
   names(clr.values) <- names(sample.readcounts)
