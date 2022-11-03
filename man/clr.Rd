@@ -29,9 +29,9 @@ making use of sum-of-squares type of statistics, like PCA, PLS, ANOVA or
 clustering with euclidean distances.
 
 The transform does not accept zeros in any cell of the \code{sample.readcounts}. To
-cope with this you add pseudo-counts. By default 1 additional read is assigned to
+cope with this you add pseudo-counts. By default 1 additional readcount is assigned to
 all cells in \code{readcount.mat}. You may change this value, and it need not
-be an integer. The rationale behind this is that we a priori assume a uniform
+be an integer. The rationale behind this is that we *a priori* assumes a uniform
 distribution of the taxa, and the more pseudo-counts you add, the more weight
 you give to this prior.
 
