@@ -3,13 +3,33 @@
 #'
 #' @description Testing for differential abundance using non-parametric tests.
 #'
-#' @usage nonparDA(ps.obj)
+#' @usage nonparDA(ps.obj, category_column = NULL, contrast = NULL, p.adjust.method = "BH", verbose = TRUE)
 #'
 #' @param ps.obj A phyloseq object.
+#' @param category_column Name of one column in sample_table(ps.obj) used to group the samples.
+#' @param contrast Optional specification of which category levels to use, see below.
+#' @param p.adjust.method The method used for multiple testing correction, see \code{\link{p.adjust}}.
+#' @param verbose Logical to turn on/off output during computing.
 #'
-#' @details
+#' @details Performs a Kruskal-Wallis non-parametric test for differential abundance
+#' for each OTU in a \code{\link{phyloseq}} object.
 #'
-#' @return
+#' The \code{category_column} must be the name of a column in \code{sample_table(ps.obj)}
+#' that splits the samples into groups.
+#'
+#' If no \code{contrast} is specified, a Kruskal-Wallis test is performed, using all category levels,
+#' i.e. it tests if the abundance for at least one level deviates from at least one other level.
+#' If \code{contrast} contains one text it must one of the levels in \code{category_column}, and then
+#' the test is contrasting this level against all the others (A versus not A). If \code{contrast} contains
+#' two texts, both must be levels in \code{category_column}, and the test is contrasting the samples from
+#' these two levels only (A versus B).
+#'
+#' @return A table with the columns
+#' \itemize{
+#'   \item{OTU}
+#'   \item{statistic} The Kruskal-Wallis test statistic
+#'   \item{p.value} Raw p-value.
+#'   \item{p.adj} Adjusted p-value due to multiple testing
 #'
 #' @author Lars Snipen.
 #'
