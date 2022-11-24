@@ -106,3 +106,6 @@ rarefaction_curves <- function(phyloseq.object, step = 100, plot = TRUE){
     return(rar.tbl)
   }
 }
+
+
+
