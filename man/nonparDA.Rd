@@ -18,7 +18,13 @@ nonparDA(ps.obj, category_column = NULL, contrast = NULL, p.adjust.method = "BH"
 \item{verbose}{Logical to turn on/off output during computing.}
 }
 \value{
-
+A table with the columns
+\itemize{
+  \item{OTU}
+  \item{statistic} The Kruskal-Wallis test statistic
+  \item{p.value} Raw p-value.
+  \item{p.adj} Adjusted p-value due to multiple testing
+ }
 }
 \description{
 Testing for differential abundance using non-parametric tests.

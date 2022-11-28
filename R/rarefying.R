@@ -65,7 +65,7 @@ min_var_down_sampling <- function(sample.readcounts, size = sum(sample.readcount
 }
 
 #' @name rarefaction_curves
-#' @title Computes rarafecation curves
+#' @title Computes rarefaction curves
 #'
 #' @description Computes rarefaction curves for a phyloseq object.
 #'

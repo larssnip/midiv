@@ -30,6 +30,7 @@
 #'   \item{statistic} The Kruskal-Wallis test statistic
 #'   \item{p.value} Raw p-value.
 #'   \item{p.adj} Adjusted p-value due to multiple testing
+#'  }
 #'
 #' @author Lars Snipen.
 #'

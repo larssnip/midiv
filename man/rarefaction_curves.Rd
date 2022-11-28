@@ -2,7 +2,7 @@
 % Please edit documentation in R/rarefying.R
 \name{rarefaction_curves}
 \alias{rarefaction_curves}
-\title{Computes rarafecation curves}
+\title{Computes rarefaction curves}
 \usage{
 rarefaction_curves(phyloseq.object, step = 100, plot = TRUE)
 }
