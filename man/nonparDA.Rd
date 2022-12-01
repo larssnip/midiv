@@ -4,12 +4,12 @@
 \alias{nonparDA}
 \title{Non-parametric DA testing}
 \usage{
-nonparDA(ps.obj, category_column = NULL, contrast = NULL, p.adjust.method = "BH", verbose = TRUE)
+nonparDA(ps.obj, group = NULL, contrast = NULL, p.adjust.method = "BH", verbose = TRUE)
 }
 \arguments{
 \item{ps.obj}{A phyloseq object.}
 
-\item{category_column}{Name of one column in sample_table(ps.obj) used to group the samples.}
+\item{group}{Name of one column in sample_table(ps.obj) used to group the samples.}
 
 \item{contrast}{Optional specification of which category levels to use, see below.}
 
@@ -33,14 +33,14 @@ Testing for differential abundance using non-parametric tests.
 Performs a Kruskal-Wallis non-parametric test for differential abundance
 for each OTU in a \code{\link{phyloseq}} object.
 
-The \code{category_column} must be the name of a column in \code{sample_table(ps.obj)}
+The \code{group} must be the name of a column in \code{sample_table(ps.obj)}
 that splits the samples into groups.
 
 If no \code{contrast} is specified, a Kruskal-Wallis test is performed, using all category levels,
 i.e. it tests if the abundance for at least one level deviates from at least one other level.
-If \code{contrast} contains one text it must one of the levels in \code{category_column}, and then
+If \code{contrast} contains one text it must one of the levels in \code{group}, and then
 the test is contrasting this level against all the others (A versus not A). If \code{contrast} contains
-two texts, both must be levels in \code{category_column}, and the test is contrasting the samples from
+two texts, both must be levels in \code{group}, and the test is contrasting the samples from
 these two levels only (A versus B).
 }
 \author{

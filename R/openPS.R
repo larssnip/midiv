@@ -130,3 +130,32 @@ openPS2phyloseq <- function(openPS.obj){
   }
   return(ps.obj)
 }
+
+
+#' @name phyloseq2openPS
+#' @title Convert to openPS object
+#'
+#' @description Creating a simple list from a phyloseq object.
+#'
+#' @param phyloseq.obj A phyloseq object, see \code{\link{phyloseq}}.
+#'
+#' @details This function converts a phyloseq object to a simple \code{\link{list}}
+#' giving the entries the names as in \code{\link{openPS}}.
+#'
+#' This may be convenient for some wrangling on the data, and then perhaps converting
+#' it back to a phyloseq object again with \code{\link{openPS2phyloseq}}.
+#'
+#' @return A \code{list} with entries as in an openPS object.
+#'
+#' @author Lars Snipen.
+#'
+#' @importFrom phyloseq phyloseq otu_table sample_data tax_table
+#'
+#' @export phyloseq2openPS
+#'
+phyloseq2openPS <- function(phyloseq.obj){
+  lst <- list(sample_data.tbl = as.data.frame(as.matrix(sample_data(phyloseq.obj))),
+              otu_table.mat = as.matrix(as.data.frame(otu_table(phyloseq.obj))),
+              tax_table.mat = as.matrix(as.data.frame(tax_table(phyloseq.obj))))
+  return(lst)
+}

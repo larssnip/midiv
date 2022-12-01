@@ -3,10 +3,10 @@
 #'
 #' @description Testing for differential abundance using non-parametric tests.
 #'
-#' @usage nonparDA(ps.obj, category_column = NULL, contrast = NULL, p.adjust.method = "BH", verbose = TRUE)
+#' @usage nonparDA(ps.obj, group = NULL, contrast = NULL, p.adjust.method = "BH", verbose = TRUE)
 #'
 #' @param ps.obj A phyloseq object.
-#' @param category_column Name of one column in sample_table(ps.obj) used to group the samples.
+#' @param group Name of one column in sample_table(ps.obj) used to group the samples.
 #' @param contrast Optional specification of which category levels to use, see below.
 #' @param p.adjust.method The method used for multiple testing correction, see \code{\link{p.adjust}}.
 #' @param verbose Logical to turn on/off output during computing.
@@ -14,14 +14,14 @@
 #' @details Performs a Kruskal-Wallis non-parametric test for differential abundance
 #' for each OTU in a \code{\link{phyloseq}} object.
 #'
-#' The \code{category_column} must be the name of a column in \code{sample_table(ps.obj)}
+#' The \code{group} must be the name of a column in \code{sample_table(ps.obj)}
 #' that splits the samples into groups.
 #'
 #' If no \code{contrast} is specified, a Kruskal-Wallis test is performed, using all category levels,
 #' i.e. it tests if the abundance for at least one level deviates from at least one other level.
-#' If \code{contrast} contains one text it must one of the levels in \code{category_column}, and then
+#' If \code{contrast} contains one text it must one of the levels in \code{group}, and then
 #' the test is contrasting this level against all the others (A versus not A). If \code{contrast} contains
-#' two texts, both must be levels in \code{category_column}, and the test is contrasting the samples from
+#' two texts, both must be levels in \code{group}, and the test is contrasting the samples from
 #' these two levels only (A versus B).
 #'
 #' @return A table with the columns
@@ -38,25 +38,24 @@
 #'
 #' @export nonparDA
 #'
-nonparDA <- function(ps.obj, category_column = NULL, contrast = NULL,
-                     p.adjust.method = "BH", verbose = TRUE){
-  if(is.null(category_column)) stop("You must name a column in sample_data(ps.obj) with categories used to group samples!")
+nonparDA <- function(ps.obj, group = NULL, contrast = NULL, p.adjust.method = "BH", verbose = TRUE){
+  if(is.null(group)) stop("You must name a column in sample_data(ps.obj) for grouping the samples!")
   readcount.tbl <- as.data.frame(t(otu_table(ps.obj))) %>%
     mutate(SampleID = rownames(.))
   full.tbl <- as.data.frame(as.matrix(sample_data(ps.obj))) %>%
     mutate(SampleID = rownames(.)) %>%
-    select(SampleID, all_of(category_column)) %>%
+    select(SampleID, all_of(group)) %>%
     left_join(readcount.tbl, by = "SampleID")
   if(!is.null(contrast)){
     if(length(contrast) == 2){
       full.tbl <- full.tbl %>%
-        filter(.data[[category_column]] %in% contrast)
+        filter(.data[[group]] %in% contrast)
       tt <- table(full.tbl[,2])
-      if(length(tt) != 2) stop("Cannot find both the levels: ", contrast[1], " and ", contrast[2], " in the column ", category_column)
+      if(length(tt) != 2) stop("Cannot find both the levels: ", contrast[1], " and ", contrast[2], " in the column ", group)
     } else {
       full.tbl <- full.tbl %>%
-        mutate(new_cat = if_else(.data[[category_column]] == contrast, as.character(contrast), str_c("not_", contrast))) %>%
-        select(-all_of(category_column)) %>%
+        mutate(new_cat = if_else(.data[[group]] == contrast, as.character(contrast), str_c("not_", contrast))) %>%
+        select(-all_of(group)) %>%
         select(SampleID, new_cat, everything())
     }
   }
