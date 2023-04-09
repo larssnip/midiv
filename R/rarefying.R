@@ -22,9 +22,9 @@
 #' The sampling without replacement means the actual reads are sampled, and no
 #' OTU can end up with more reads after down-sampling. However, both procedures
 #' introduce an extra variance in the data, especially in the more abundant OTU's.
-#' This variance has no biological information.
+#' This variance is puerly technical and has nothing to do with the biological variation.
 #'
-#' This function minimizes implements a down-sampling that minimizes the
+#' This function implements a down-sampling that minimizes the
 #' variance, by only sampling the few reads needed to 'correct' the expected read
 #' count into an actual read count, as follows:
 #'

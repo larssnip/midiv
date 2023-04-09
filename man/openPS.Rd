@@ -13,13 +13,13 @@ openPS(
 )
 }
 \arguments{
-\item{metadata.file}{Full name of text-file with sample metadata.}
+\item{metadata.file}{Full name of text-file with sample metadata. This is named sample_table in phyloseq.}
 
-\item{readcounts.file}{Full name of text-file with readcounts data, assume samples in the columns.}
+\item{readcounts.file}{Full name of text-file with readcounts data, assume samples in the columns. This is named otu_table (but is a matrix) in phyloseq.}
 
-\item{centroids.file}{Full name of fasta-file with OTU sequences.}
+\item{centroids.file}{Full name of fasta-file with OTU sequences. This is not found in phyloseq.}
 
-\item{taxonomy.file}{Full name of text-file with the OTU taxonomy table results (optional).}
+\item{taxonomy.file}{Full name of text-file with the OTU taxonomy table results (optional). This is named tax_table (but is a matrix) in phyloseq.}
 
 \item{sintax.threshold}{A value between 0.0 and 1.0 indicating confidence threshold for the taxonomy (optional).}
 }
@@ -27,10 +27,10 @@ openPS(
 A list with the elements:
 
 \itemize{
-  \item{\code{sample_data.tbl}}{ a data.frame with one row for each sample. Its rownames are the SampleID's.}
-  \item{\code{otu_table.mat}}{ a matrix with the readcounts. These may later be transformed. The samples are in the columns, the OTUs in the rows.}
+  \item{\code{metadata.tbl}}{ a data.frame with one row for each sample. Its rownames are the SampleID's.}
+  \item{\code{readcount.mat}}{ a matrix with the readcounts. These may later be transformed. The samples are in the columns, the OTUs in the rows.}
   \item{\code{sequence.tbl}}{ a data.frame with the OTU sequences (see \code{\link{readFasta}}).}
-  \item{\code{tax_table.mat}}{ a matrix with the taxonomy, one row for each OTU.}
+  \item{\code{taxonomy.mat}}{ a matrix with the taxonomy, one row for each OTU.}
 }
 }
 \description{

@@ -3,10 +3,10 @@
 #'
 #' @description Creating an object similar to a phyloseq-object, but as an open list.
 #'
-#' @param metadata.file Full name of text-file with sample metadata.
-#' @param readcounts.file Full name of text-file with readcounts data, assume samples in the columns.
-#' @param centroids.file Full name of fasta-file with OTU sequences.
-#' @param taxonomy.file Full name of text-file with the OTU taxonomy table results (optional).
+#' @param metadata.file Full name of text-file with sample metadata. This is named sample_table in phyloseq.
+#' @param readcounts.file Full name of text-file with readcounts data, assume samples in the columns. This is named otu_table (but is a matrix) in phyloseq.
+#' @param centroids.file Full name of fasta-file with OTU sequences. This is not found in phyloseq.
+#' @param taxonomy.file Full name of text-file with the OTU taxonomy table results (optional). This is named tax_table (but is a matrix) in phyloseq.
 #' @param sintax.threshold A value between 0.0 and 1.0 indicating confidence threshold for the taxonomy (optional).
 #'
 #' @details This function reads the input files, and store their content in a
@@ -18,10 +18,10 @@
 #' @return A list with the elements:
 #'
 #' \itemize{
-#'   \item{\code{sample_data.tbl}}{ a data.frame with one row for each sample. Its rownames are the SampleID's.}
-#'   \item{\code{otu_table.mat}}{ a matrix with the readcounts. These may later be transformed. The samples are in the columns, the OTUs in the rows.}
+#'   \item{\code{metadata.tbl}}{ a data.frame with one row for each sample. Its rownames are the SampleID's.}
+#'   \item{\code{readcount.mat}}{ a matrix with the readcounts. These may later be transformed. The samples are in the columns, the OTUs in the rows.}
 #'   \item{\code{sequence.tbl}}{ a data.frame with the OTU sequences (see \code{\link{readFasta}}).}
-#'   \item{\code{tax_table.mat}}{ a matrix with the taxonomy, one row for each OTU.}
+#'   \item{\code{taxonomy.mat}}{ a matrix with the taxonomy, one row for each OTU.}
 #' }
 #'
 #' @author Lars Snipen.
@@ -37,9 +37,9 @@ openPS <- function(metadata.file, readcounts.file, centroids.file,
   ## The sample metadata
   metadata.tbl <- suppressMessages(read_delim(metadata.file, delim = "\t")) %>%
     as.data.frame()
-  rownames(metadata.tbl) <- metadata.tbl$SampleID # rownames on a table is silly, but required by phyloseq
+  rownames(metadata.tbl) <- metadata.tbl$SampleID  # convenient for converting to phyloseq
 
-  ## The readcounts
+  ## The readcounts as a matrix
   readcount.tbl <- suppressMessages(read_delim(readcounts.file, delim = "\t")) %>%
     as.data.frame()
   readcount.mat <- readcount.tbl %>%
@@ -52,18 +52,18 @@ openPS <- function(metadata.file, readcounts.file, centroids.file,
 
   ## Ensure same ordering
   idx <- match(rownames(metadata.tbl), colnames(readcount.mat))
-  if(sum(is.na(idx)) > 0) stop("The SampleID's in ", metadata.file, "do not correspond to those in ", readcounts.file)
+  if(sum(is.na(idx)) > 0) stop("The SampleID's in ", metadata.file, " do not correspond to those in ", readcounts.file)
   readcount.mat <- readcount.mat[,idx]
   idx <- match(sequence.tbl$Header, rownames(readcount.mat))
-  if(sum(is.na(idx)) > 0) stop("The OTU's in ", centroids.file, "do not correspond to those in ", readcounts.file)
+  if(sum(is.na(idx)) > 0) stop("The OTU's in ", centroids.file, " do not correspond to those in ", readcounts.file)
   readcount.mat <- readcount.mat[idx,]
 
   ## Create list
-  openPS.obj <- list(sample_data.tbl = metadata.tbl,
-                     otu_table.mat = readcount.mat,
+  openPS.obj <- list(metadata.tbl = metadata.tbl,
+                     readcount.mat = readcount.mat,
                      sequence.tbl = sequence.tbl)
   if(!is.null(taxonomy.file)){
-    tax.tbl <- read.table(taxonomy.file, header = T, sep = "\t") %>%
+    taxonomy.tbl <- read.table(taxonomy.file, header = T, sep = "\t") %>%
       mutate(species = as.character(species)) %>%
       mutate(species = if_else(species_score >= sintax.threshold, species, "unclassified")) %>%
       mutate(genus = if_else(genus_score >= sintax.threshold, genus, "unclassified")) %>%
@@ -83,7 +83,7 @@ openPS <- function(metadata.file, readcounts.file, centroids.file,
     if(sum(is.na(idx)) > 0) stop("The OTU's in ", taxonomy.file, "do not correspond to those in ", readcounts.file)
     tax.mat <- tax.mat[idx,]
 
-    openPS.obj$tax_table.mat <- tax.mat
+    openPS.obj$taxonomy.mat <- tax.mat
   }
   return(openPS.obj)
 }
@@ -107,25 +107,25 @@ openPS <- function(metadata.file, readcounts.file, centroids.file,
 #' @export openPS2phyloseq
 #'
 openPS2phyloseq <- function(openPS.obj){
-  if(exists("tax_table.mat", where = openPS.obj)){
+  if(exists("taxonomy.mat", where = openPS.obj)){
     if(exists("tree", where = openPS.obj)){
-      ps.obj <- phyloseq(otu_table(openPS.obj$otu_table.mat, taxa_are_rows = T),
-                          sample_data(openPS.obj$sample_data.tbl),
-                          tax_table(openPS.obj$tax_table.mat),
+      ps.obj <- phyloseq(otu_table(openPS.obj$readcount.mat, taxa_are_rows = T),
+                         sample_data(openPS.obj$metadata.tbl),
+                         tax_table(openPS.obj$taxonomy.mat),
                          openPS.obj$tree)
     } else {
-      ps.obj <- phyloseq(otu_table(openPS.obj$otu_table.mat, taxa_are_rows = T),
-                          sample_data(openPS.obj$sample_data.tbl),
-                          tax_table(openPS.obj$tax_table.mat))
+      ps.obj <- phyloseq(otu_table(openPS.obj$readcount.mat, taxa_are_rows = T),
+                         sample_data(openPS.obj$metadata.tbl),
+                         tax_table(openPS.obj$taxonomy.mat))
     }
   } else {
     if(exists("tree", where = openPS.obj)){
-      ps.obj <- phyloseq(otu_table(openPS.obj$otu_table.mat, taxa_are_rows = T),
-                          sample_data(openPS.obj$sample_data.tbl),
+      ps.obj <- phyloseq(otu_table(openPS.obj$readcount.mat, taxa_are_rows = T),
+                         sample_data(openPS.obj$metadata.tbl),
                          openPS.obj$tree)
     } else {
-      ps.obj <- phyloseq(otu_table(openPS.obj$otu_table.mat, taxa_are_rows = T),
-                          sample_data(openPS.obj$sample_data.tbl))
+      ps.obj <- phyloseq(otu_table(openPS.obj$readcount.mat, taxa_are_rows = T),
+                         sample_data(openPS.obj$metadata.tbl))
     }
   }
   return(ps.obj)
@@ -154,8 +154,8 @@ openPS2phyloseq <- function(openPS.obj){
 #' @export phyloseq2openPS
 #'
 phyloseq2openPS <- function(phyloseq.obj){
-  lst <- list(sample_data.tbl = as.data.frame(as.matrix(sample_data(phyloseq.obj))),
-              otu_table.mat = as.matrix(as.data.frame(otu_table(phyloseq.obj))),
-              tax_table.mat = as.matrix(as.data.frame(tax_table(phyloseq.obj))))
+  lst <- list(metadata.tbl = as.data.frame(as.matrix(sample_data(phyloseq.obj))),
+              readcount.mat = as.matrix(as.data.frame(otu_table(phyloseq.obj))),
+              taxonomy.mat = as.matrix(as.data.frame(tax_table(phyloseq.obj))))
   return(lst)
 }
