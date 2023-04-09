@@ -63,7 +63,7 @@ openPS <- function(metadata.file, readcounts.file, centroids.file,
                      readcount.mat = readcount.mat,
                      sequence.tbl = sequence.tbl)
   if(!is.null(taxonomy.file)){
-    taxonomy.tbl <- read.table(taxonomy.file, header = T, sep = "\t") %>%
+    tax.tbl <- read.table(taxonomy.file, header = T, sep = "\t") %>%
       mutate(species = as.character(species)) %>%
       mutate(species = if_else(species_score >= sintax.threshold, species, "unclassified")) %>%
       mutate(genus = if_else(genus_score >= sintax.threshold, genus, "unclassified")) %>%
