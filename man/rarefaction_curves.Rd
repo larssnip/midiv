@@ -7,7 +7,9 @@
 rarefaction_curves(phyloseq.object, step = 100, plot = TRUE)
 }
 \arguments{
-\item{phyloseq.object}{A phyloseq object.}
+\item{midiv.object}{A midiv object. You may supply either this or a phyloseq object.}
+
+\item{phyloseq.object}{A phyloseq object. You may supply either this or a midiv object.}
 
 \item{step}{The step-size used to choose different down-sampling levels (readcounts).}
 
@@ -22,8 +24,9 @@ a different display of the curves
 Computes rarefaction curves for a phyloseq object.
 }
 \details{
-This function takes as input a phyloseq object, and uses the function
-\code{\link{rarecurve}} in the \code{vegan} package for the computations.
+This function takes as input either a midiv object or a phyloseq object,
+and uses the function \code{\link{rarecurve}} in the \code{vegan} package for
+the computations.
 }
 \author{
 Lars Snipen.

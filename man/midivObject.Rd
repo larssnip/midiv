@@ -75,8 +75,9 @@ OTUs in the \code{readcount.mat} above (typically OTU1, OTU2,...).
 
 The \code{taxonomy.tbl} may be supplied, and must then be a table where the first
 column is named \code{OTU} and contains the texts identifying the OTUs (typically OTU1, OTU2,...).
-The remaining columns should list the taxonomy at various ranks,
-and columns with (SINTAX) confidence scores are also allowed. If \code{taxonomy.tbl} is a file name
+The remaining columns should list the taxonomy at various ranks, and nothing more. Columns of scores
+etc must been selected out of this table, see \code{\link{sintaxFilter}}.
+If \code{taxonomy.tbl} is a file name
 the file must be a tab-delimited text file with the columns as described above.
 NB! In the created \code{midiv} object this is merged with the \code{sequence.tbl}.
 
