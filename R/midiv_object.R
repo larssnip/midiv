@@ -26,7 +26,7 @@
 #' a tab-delimited text file, with OTUs in the rows and the samples in the columns,
 #' but where the first column contains the OTU identifying texts (typically OTU1, OTU2,...).
 #'
-#' The \code{sequence.tbl} is a Fasta-table with centroid sequences, see \code{\link{microseq::readFasta}},
+#' The \code{sequence.tbl} is a Fasta-table with centroid sequences, see \code{\link{readFasta}},
 #' or the name of a FASTA-file. These sequences are the centroid sequences for
 #' each OTU, and the texts in the Header column must match the texts identifying the
 #' OTUs in the \code{readcount.mat} above (typically OTU1, OTU2,...).
