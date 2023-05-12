@@ -1,4 +1,4 @@
-#' @name midivObject
+#' @name filterOTU
 #' @title Filter OTUs
 #'
 #' @description Filtering OTUs in a midiv object.

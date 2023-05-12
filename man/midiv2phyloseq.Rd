@@ -4,14 +4,12 @@
 \alias{midiv2phyloseq}
 \title{Convert midiv to phyloseq object}
 \usage{
-midiv2phyloseq(
-  midiv.obj,
-  sintax.threshold = 0.5,
-  sample_id_column = "SampleID"
-)
+midiv2phyloseq(midiv.obj, sample_id_column = "SampleID")
 }
 \arguments{
 \item{midiv.obj}{A midiv object, see \code{\link{midivObject}}.}
+
+\item{sample_id_column}{Text with the name of the metadata.tbl column name that identifies samples.}
 }
 \value{
 A \code{\link{phyloseq}} object.

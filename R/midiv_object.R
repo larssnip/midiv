@@ -135,12 +135,15 @@ midivObject <- function(metadata.tbl, readcount.mat, sequence.tbl,
   return(midiv.obj)
 }
 
+
+
 #' @name midiv2phyloseq
 #' @title Convert midiv to phyloseq object
 #'
 #' @description Creating a phyloseq object from a midiv object.
 #'
 #' @param midiv.obj A midiv object, see \code{\link{midivObject}}.
+#' @param sample_id_column Text with the name of the metadata.tbl column name that identifies samples.
 #'
 #' @details This function converts a midiv object, which is a simple
 #' \code{list}, to a \code{\link{phyloseq}} object from the \code{phyloseq} R package.
@@ -154,7 +157,7 @@ midivObject <- function(metadata.tbl, readcount.mat, sequence.tbl,
 #'
 #' @export midiv2phyloseq
 #'
-midiv2phyloseq <- function(midiv.obj, sintax.threshold = 0.5, sample_id_column = "SampleID"){
+midiv2phyloseq <- function(midiv.obj, sample_id_column = "SampleID"){
   otu.table <- midiv.obj$readcount.mat
 
   sample.data <- midiv.obj$metadata.tbl
@@ -162,17 +165,7 @@ midiv2phyloseq <- function(midiv.obj, sintax.threshold = 0.5, sample_id_column =
 
   taxonomy.tbl <- select(midiv.obj$sequence.tbl, -c(OTU, Sequence))
   if(ncol(taxonomy.tbl) > 0){
-    tax.mat <- taxonomy.tbl %>%
-      mutate(species = as.character(species)) %>%
-      mutate(species = if_else(species_score >= sintax.threshold, species, "unclassified")) %>%
-      mutate(genus = if_else(genus_score >= sintax.threshold, genus, "unclassified")) %>%
-      mutate(family = if_else(family_score >= sintax.threshold, family, "unclassified")) %>%
-      mutate(order = if_else(order_score >= sintax.threshold, order, "unclassified")) %>%
-      mutate(class = if_else(class_score >= sintax.threshold, class, "unclassified")) %>%
-      mutate(phylum = if_else(phylum_score >= sintax.threshold, phylum, "unclassified")) %>%
-      mutate(domain = if_else(domain_score >= sintax.threshold, domain, "unclassified")) %>%
-      select(-contains("score")) %>%
-      as.matrix()
+    tax.mat <- as.matrix(taxonomy.tbl)
     rownames(tax.mat) <- midiv.obj$sequence.tbl$OTU
     ps.obj <- phyloseq(otu_table(otu.table, taxa_are_rows = T),
                        sample_data(sample.data),
