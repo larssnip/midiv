@@ -24,13 +24,13 @@
 #'
 sintaxFilter <- function(taxonomy.tbl, sintax.threshold = 0.5){
   taxonomy.tbl <- taxonomy.tbl %>%
-    mutate(domain = if_else(domain_score >= sintax.threshold, domain, NA)) %>%
-    mutate(phylum = if_else(phylum_score >= sintax.threshold, phylum, NA)) %>%
-    mutate(class = if_else(class_score >= sintax.threshold, class, NA)) %>%
-    mutate(order = if_else(order_score >= sintax.threshold, order, NA)) %>%
-    mutate(family = if_else(family_score >= sintax.threshold, family, NA)) %>%
-    mutate(genus = if_else(genus_score >= sintax.threshold, genus, NA)) %>%
-    mutate(species = if_else(species_score >= sintax.threshold, species, NA)) %>%
+    mutate(domain = if_else(domain_score >= sintax.threshold, domain, NA_character_)) %>%
+    mutate(phylum = if_else(phylum_score >= sintax.threshold, phylum, NA_character_)) %>%
+    mutate(class = if_else(class_score >= sintax.threshold, class, NA_character_)) %>%
+    mutate(order = if_else(order_score >= sintax.threshold, order, NA_character_)) %>%
+    mutate(family = if_else(family_score >= sintax.threshold, family, NA_character_)) %>%
+    mutate(genus = if_else(genus_score >= sintax.threshold, genus, NA_character_)) %>%
+    mutate(species = if_else(species_score >= sintax.threshold, species, NA_character_)) %>%
     select(!contains("_score"))
   return(taxonomy.tbl)
 }
