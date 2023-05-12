@@ -25,7 +25,7 @@
 sintaxFilter <- function(taxonomy.tbl, sintax.threshold = 0.5){
   taxonomy.tbl <- taxonomy.tbl %>%
     mutate(across(contains("_score"), function(x){x = if_else(is.na(x), 0, as.numeric(x))})) %>%
-    mutate(across(!contains("_score"), function(x){x = if_else(is.na(x), NA_character_, as.character(x))})) %>%
+    mutate(across(!contains("_score"), as.character)) %>%
     mutate(domain = if_else(domain_score >= sintax.threshold, domain, NA_character_)) %>%
     mutate(phylum = if_else(phylum_score >= sintax.threshold, phylum, NA_character_)) %>%
     mutate(class = if_else(class_score >= sintax.threshold, class, NA_character_)) %>%
