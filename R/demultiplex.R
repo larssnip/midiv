@@ -9,6 +9,7 @@
 #' @param out.folder Name of folder to output de-multiplexed fastq files.
 #' @param compress.out Logical to indicate compressed output or not.
 #' @param pattern The pattern to recognize the raw fastq files from other files
+#' @param trim.primers Logical indicating if PCR-primers should be trimmed from start of R1 and R2 reads.
 #'
 #' @details The input \code{metadata.tbl} must be a table (tibble or data.frame)
 #' with one row for each sample. It must follow the MiDiv metadata table standard
@@ -19,6 +20,8 @@
 #' * Rawfile_R1
 #' * Rawfile_R2
 #' * Barcode
+#' * Forward_primer
+#' *Reverse_primer
 #'
 #' The ProjectID, SequencingRunID and SampleID should all be a short text
 #' (sampleID may be just an integer). The names of the de-multiplexed fastq files will
@@ -30,6 +33,10 @@
 #' The subset of read-pairs for each sample is identified by a barcode
 #' sequence, and this must be listed in the Barcode column. The Barcode
 #' sequence is matched at the start of the R1-reads only.
+#'
+#' If \code{trim.primers=TRUE} the start of the R1 sequence is trimmed by the
+#' length of Forward_primer, and the start of the R2 read trimmed by the length
+#' of Reverse_primer.
 #'
 #' The files listed in Rawfile_R1 and Rawfile_R2 must all be in the \code{in.folder}.
 #' These files may be compressed (.gz).
@@ -54,13 +61,13 @@
 #'
 #' @export demultiplex
 #'
-demultiplex <- function(metadata.tbl, in.folder, out.folder){
+demultiplex <- function(metadata.tbl, in.folder, out.folder, trim.primers = TRUE){
   cat("De-multiplexing:\n")
   in.folder <- normalizePath(in.folder)
   out.folder <- normalizePath(out.folder)
-  cnames <- c("ProjectID", "SequencingRunID", "SampleID", "Rawfile_R1", "Rawfile_R2", "Barcode")
+  cnames <- c("ProjectID", "SequencingRunID", "SampleID", "Rawfile_R1", "Rawfile_R2", "Barcode", "Forward_primer", "Reverse_primer")
   if(sum(is.na(match(cnames, colnames(metadata.tbl)))) > 0)
-    stop("The metadata.tbl must have columns named ProjectID, SequencingRunID, SampleID, Rawfile_R1, Rawfile_R2 and Barcode")
+    stop("The metadata.tbl must have columns named ProjectID, SequencingRunID, SampleID, Rawfile_R1, Rawfile_R2, Barcode, Forward_primer and Reverse_primer")
   utbl <- metadata.tbl %>%
     select(Rawfile_R1, Rawfile_R2) %>%
     distinct()
@@ -81,10 +88,19 @@ demultiplex <- function(metadata.tbl, in.folder, out.folder){
     for(j in 1:length(idx)){
       cat("      Barcode", metadata.tbl$Barcode[idx[j]], "...\n")
       nc <- str_length(metadata.tbl$Barcode[idx[j]])
+      nf <- str_length(metadata.tbl$Forward_primer[idx[j]])
+      nr <- str_length(metadata.tbl$Reverse_primer[idx[j]])
       tbl0 <- tbl %>%
         filter(str_detect(R1.Sequence, str_c("^", metadata.tbl$Barcode[idx[j]]))) %>%
         mutate(R1.Sequence = str_sub(R1.Sequence, start = nc + 1, end = -1)) %>%
         mutate(R1.Quality = str_sub(R1.Quality, start = nc + 1, end = -1))
+      if(trim.primers){
+        tbl0 <- tbl0 %>%
+          mutate(R1.Sequence = str_sub(R1.Sequence, start = nf + 1, end = -1)) %>%
+          mutate(R1.Quality = str_sub(R1.Quality, start = nf + 1, end = -1)) %>%
+          mutate(R2.Sequence = str_sub(R2.Sequence, start = nr + 1, end = -1)) %>%
+          mutate(R2.Quality = str_sub(R2.Quality, start = nr + 1, end = -1))
+      }
       tbl0 %>% select(starts_with("R1")) %>%
         rename(Header = R1.Header, Sequence = R1.Sequence, Quality = R1.Quality) %>%
         writeFastq(out.file = file.path(out.folder, str_c(metadata.tbl$ProjectID[idx[j]], "_",

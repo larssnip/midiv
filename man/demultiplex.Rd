@@ -4,7 +4,7 @@
 \alias{demultiplex}
 \title{De-multiplexing fastq files}
 \usage{
-demultiplex(metadata.tbl, in.folder, out.folder)
+demultiplex(metadata.tbl, in.folder, out.folder, trim.primers = TRUE)
 }
 \arguments{
 \item{metadata.tbl}{Table with data for each sample, see Details below.}
@@ -12,6 +12,8 @@ demultiplex(metadata.tbl, in.folder, out.folder)
 \item{in.folder}{Name of folder where raw fastq files are located.}
 
 \item{out.folder}{Name of folder to output de-multiplexed fastq files.}
+
+\item{trim.primers}{Logical indicating if PCR-primers should be trimmed from start of R1 and R2 reads.}
 
 \item{compress.out}{Logical to indicate compressed output or not.}
 
@@ -43,6 +45,8 @@ format. The columns used by this function are:
 * Rawfile_R1
 * Rawfile_R2
 * Barcode
+* Forward_primer
+*Reverse_primer
 
 The ProjectID, SequencingRunID and SampleID should all be a short text
 (sampleID may be just an integer). The names of the de-multiplexed fastq files will
@@ -54,6 +58,10 @@ named in columns Rawfile_R1 and Rawfile_R2 (if single-end reads, only Rawfile_R1
 The subset of read-pairs for each sample is identified by a barcode
 sequence, and this must be listed in the Barcode column. The Barcode
 sequence is matched at the start of the R1-reads only.
+
+If \code{trim.primers=TRUE} the start of the R1 sequence is trimmed by the
+length of Forward_primer, and the start of the R2 read trimmed by the length
+of Reverse_primer.
 
 The files listed in Rawfile_R1 and Rawfile_R2 must all be in the \code{in.folder}.
 These files may be compressed (.gz).
