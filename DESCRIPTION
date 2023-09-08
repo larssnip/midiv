@@ -1,8 +1,8 @@
 Package: midiv
 Type: Package
 Title: MiDiv-lab bioinformatics
-Version: 2.1.1
-Date: 2023-04-09
+Version: 2.2.0
+Date: 2023-09-08
 Author: Lars Snipen
 Maintainer: Lars Snipen <lars.snipen@nmbu.no>
 Description: Some special functions needed in MiDiv-lab pipelines.
