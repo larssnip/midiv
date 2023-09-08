@@ -21,7 +21,7 @@
 #' * Rawfile_R2
 #' * Barcode
 #' * Forward_primer
-#' *Reverse_primer
+#' * Reverse_primer
 #'
 #' The ProjectID, SequencingRunID and SampleID should all be a short text
 #' (sampleID may be just an integer). The names of the de-multiplexed fastq files will
@@ -36,7 +36,8 @@
 #'
 #' If \code{trim.primers=TRUE} the start of the R1 sequence is trimmed by the
 #' length of Forward_primer, and the start of the R2 read trimmed by the length
-#' of Reverse_primer.
+#' of Reverse_primer. NOTE: There is no primer-matching here. No reads are discarded,
+#' only trimmed by primer lengths.
 #'
 #' The files listed in Rawfile_R1 and Rawfile_R2 must all be in the \code{in.folder}.
 #' These files may be compressed (.gz).
