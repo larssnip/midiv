@@ -91,10 +91,17 @@ demultiplex <- function(metadata.tbl, in.folder, out.folder, trim.primers = TRUE
       nc <- str_length(metadata.tbl$Barcode[idx[j]])
       nf <- str_length(metadata.tbl$Forward_primer[idx[j]])
       nr <- str_length(metadata.tbl$Reverse_primer[idx[j]])
+      R1.tbl <- R1.tbl |>
+        mutate(start2 = str_sub(R1.Sequence, 1, nc + 2))
+      M <- str_locate(R1.tbl$start2, metadata.tbl$Barcode[idx[j]])
+      rr <- which(!is.na(M[,1]))
       tbl0 <- tbl %>%
-        filter(str_detect(R1.Sequence, str_c("^", metadata.tbl$Barcode[idx[j]]))) %>%
-        mutate(R1.Sequence = str_sub(R1.Sequence, start = nc + 1, end = -1)) %>%
-        mutate(R1.Quality = str_sub(R1.Quality, start = nc + 1, end = -1))
+        slice(rr) %>%
+        mutate(R1.Sequence = str_sub(R1.Sequence, start = M[rr,2] + 1, end = -1)) %>%
+        mutate(R1.Quality = str_sub(R1.Quality, start = M[rr,2] + 1, end = -1))
+        # filter(str_detect(start2, metadata.tbl$Barcode[idx[j]]))) %>%
+        # mutate(R1.Sequence = str_sub(R1.Sequence, start = nc + 1, end = -1)) %>%
+        # mutate(R1.Quality = str_sub(R1.Quality, start = nc + 1, end = -1))
       if(trim.primers){
         tbl0 <- tbl0 %>%
           mutate(R1.Sequence = str_sub(R1.Sequence, start = nf + 1, end = -1)) %>%
