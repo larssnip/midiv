@@ -137,72 +137,72 @@ midivObject <- function(metadata.tbl, readcount.mat, sequence.tbl,
 
 
 
-#' @name midiv2phyloseq
-#' @title Convert midiv to phyloseq object
+#' #' @name midiv2phyloseq
+#' #' @title Convert midiv to phyloseq object
+#' #'
+#' #' @description Creating a phyloseq object from a midiv object.
+#' #'
+#' #' @param midiv.obj A midiv object, see \code{\link{midivObject}}.
+#' #' @param sample_id_column Text with the name of the metadata.tbl column name that identifies samples.
+#' #'
+#' #' @details This function converts a midiv object, which is a simple
+#' #' \code{list}, to a \code{\link{phyloseq}} object from the \code{phyloseq} R package.
+#' #'
+#' #' @return A \code{\link{phyloseq}} object.
+#' #'
+#' #' @author Lars Snipen.
+#' #'
+#' #' @importFrom phyloseq phyloseq otu_table sample_data tax_table
+#' #' @importFrom dplyr %>% select mutate
+#' #'
+#' #' @export midiv2phyloseq
+#' #'
+#' midiv2phyloseq <- function(midiv.obj, sample_id_column = "SampleID"){
+#'   otu.table <- midiv.obj$readcount.mat
 #'
-#' @description Creating a phyloseq object from a midiv object.
+#'   sample.data <- midiv.obj$metadata.tbl
+#'   rownames(sample.data) <- midiv.obj$metadata.tbl[,sample_id_column]
 #'
-#' @param midiv.obj A midiv object, see \code{\link{midivObject}}.
-#' @param sample_id_column Text with the name of the metadata.tbl column name that identifies samples.
+#'   taxonomy.tbl <- select(midiv.obj$sequence.tbl, -c(OTU, Sequence))
+#'   if(ncol(taxonomy.tbl) > 0){
+#'     tax.mat <- as.matrix(taxonomy.tbl)
+#'     rownames(tax.mat) <- midiv.obj$sequence.tbl$OTU
+#'     ps.obj <- phyloseq(otu_table(otu.table, taxa_are_rows = T),
+#'                        sample_data(sample.data),
+#'                        tax_table(tax.mat))
+#'   } else {
+#'     ps.obj <- phyloseq(otu_table(otu.table, taxa_are_rows = T),
+#'                        sample_data(sample.data))
+#'   }
+#'   return(ps.obj)
+#' }
 #'
-#' @details This function converts a midiv object, which is a simple
-#' \code{list}, to a \code{\link{phyloseq}} object from the \code{phyloseq} R package.
 #'
-#' @return A \code{\link{phyloseq}} object.
-#'
-#' @author Lars Snipen.
-#'
-#' @importFrom phyloseq phyloseq otu_table sample_data tax_table
-#' @importFrom dplyr %>% select mutate
-#'
-#' @export midiv2phyloseq
-#'
-midiv2phyloseq <- function(midiv.obj, sample_id_column = "SampleID"){
-  otu.table <- midiv.obj$readcount.mat
-
-  sample.data <- midiv.obj$metadata.tbl
-  rownames(sample.data) <- midiv.obj$metadata.tbl[,sample_id_column]
-
-  taxonomy.tbl <- select(midiv.obj$sequence.tbl, -c(OTU, Sequence))
-  if(ncol(taxonomy.tbl) > 0){
-    tax.mat <- as.matrix(taxonomy.tbl)
-    rownames(tax.mat) <- midiv.obj$sequence.tbl$OTU
-    ps.obj <- phyloseq(otu_table(otu.table, taxa_are_rows = T),
-                       sample_data(sample.data),
-                       tax_table(tax.mat))
-  } else {
-    ps.obj <- phyloseq(otu_table(otu.table, taxa_are_rows = T),
-                       sample_data(sample.data))
-  }
-  return(ps.obj)
-}
-
-
-#' @name phyloseq2midiv
-#' @title Convert phyloseq to midiv object
-#'
-#' @description Creating a simple list from a phyloseq object.
-#'
-#' @param phyloseq.obj A phyloseq object, see \code{\link{phyloseq}}.
-#'
-#' @details This function converts a phyloseq object to a simple \code{\link{list}}
-#' giving the entries the names as in \code{\link{midivObject}}.
-#'
-#' This may be convenient for some wrangling on the data, and then perhaps converting
-#' it back to a phyloseq object again with \code{\link{midiv2phyloseq}}.
-#'
-#' @return A \code{list} with entries as in a midiv object, except that the
-#' \code{sequence.tbl} do not contain sequences, only taxonomy.
-#'
-#' @author Lars Snipen.
-#'
-#' @importFrom phyloseq phyloseq otu_table sample_data tax_table
-#'
-#' @export phyloseq2midiv
-#'
-phyloseq2midiv <- function(phyloseq.obj){
-  lst <- list(metadata.tbl = as.data.frame(as.matrix(sample_data(phyloseq.obj))),
-              readcount.mat = as.matrix(as.data.frame(otu_table(phyloseq.obj))),
-              sequence.tbl = as.data.frame(tax_table(phyloseq.obj)))
-  return(lst)
-}
+#' #' @name phyloseq2midiv
+#' #' @title Convert phyloseq to midiv object
+#' #'
+#' #' @description Creating a simple list from a phyloseq object.
+#' #'
+#' #' @param phyloseq.obj A phyloseq object, see \code{\link{phyloseq}}.
+#' #'
+#' #' @details This function converts a phyloseq object to a simple \code{\link{list}}
+#' #' giving the entries the names as in \code{\link{midivObject}}.
+#' #'
+#' #' This may be convenient for some wrangling on the data, and then perhaps converting
+#' #' it back to a phyloseq object again with \code{\link{midiv2phyloseq}}.
+#' #'
+#' #' @return A \code{list} with entries as in a midiv object, except that the
+#' #' \code{sequence.tbl} do not contain sequences, only taxonomy.
+#' #'
+#' #' @author Lars Snipen.
+#' #'
+#' #' @importFrom phyloseq phyloseq otu_table sample_data tax_table
+#' #'
+#' #' @export phyloseq2midiv
+#' #'
+#' phyloseq2midiv <- function(phyloseq.obj){
+#'   lst <- list(metadata.tbl = as.data.frame(as.matrix(sample_data(phyloseq.obj))),
+#'               readcount.mat = as.matrix(as.data.frame(otu_table(phyloseq.obj))),
+#'               sequence.tbl = as.data.frame(tax_table(phyloseq.obj)))
+#'   return(lst)
+#' }
