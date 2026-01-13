@@ -9,7 +9,7 @@ demultiplex(metadata.tbl, in.folder, out.folder, trim.primers = TRUE)
 \arguments{
 \item{metadata.tbl}{Table with data for each sample, see Details below.}
 
-\item{in.folder}{Name of folder where raw fastq files are located.}
+\item{in.folder}{Name of folder where the SequencingRunID folder with raw fastq files are located.}
 
 \item{out.folder}{Name of folder to output de-multiplexed fastq files.}
 
@@ -49,9 +49,15 @@ format. The columns used by this function are:
 * Reverse_primer
 
 The ProjectID, SequencingRunID and SampleID should all be a short text
-(sampleID may be just an integer). The names of the de-multiplexed fastq files will
+(SampleID may be just an integer). The names of the de-multiplexed fastq files will
 follow the format: ProjectID_SequencingRunID_SampleID_Rx.fastq.gz, where x is 1 or 2,
-so avoid using symbols not recommended in filenames (e.g. space, slash).
+so avoid using symbols not recommended in file names (e.g. space, slash).
+
+Note that SequencingRunID must be the name of the folder in which the Rawfile_R1
+and Rawfile_R2 fastq files are found. The \code{in.folder} argument is the path
+to the SequencingRunID folder. Example: Raw files are in the folder
+/mnt/rawdata/illumina/20250101_testrun/. Then \code{in.folder} is "/mnt/rawdata/illumina"
+and \code{SequencingRunID} is "20250101_testrun".
 
 De-multiplexing means extracting subsets of reads from raw fastq files, those
 named in columns Rawfile_R1 and Rawfile_R2 (if single-end reads, only Rawfile_R1).

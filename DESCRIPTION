@@ -1,13 +1,13 @@
 Package: midiv
 Type: Package
 Title: MiDiv-lab bioinformatics
-Version: 2.2.1
+Version: 2.2.2
 Date: 2025-01-13
 Author: Lars Snipen
 Maintainer: Lars Snipen <lars.snipen@nmbu.no>
 Description: Some special functions needed in MiDiv-lab pipelines.
 License: GPL-2
-Depends: R (>= 4.0.0), microseq, stringr, dplyr, readr, ggplot2,
+Depends: R (>= 4.1.0), microseq, stringr, dplyr, readr, ggplot2,
   biomformat, magrittr, vegan, colorspace
 Encoding: UTF-8
 LazyData: true
