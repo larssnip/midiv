@@ -5,7 +5,7 @@
 #' used by MiDiv lab.
 #'
 #' @param metadata.tbl Table with data for each sample, see Details below.
-#' @param in.folder	Name of folder where the SequencingRunID folder with raw fastq files are located.
+#' @param in.folder	Name of folder where the raw fastq files are located.
 #' @param out.folder Name of folder to output de-multiplexed fastq files.
 #' @param compress.out Logical to indicate compressed output or not.
 #' @param pattern The pattern to recognize the raw fastq files from other files
@@ -27,12 +27,6 @@
 #' (SampleID may be just an integer). The names of the de-multiplexed fastq files will
 #' follow the format: ProjectID_SequencingRunID_SampleID_Rx.fastq.gz, where x is 1 or 2,
 #' so avoid using symbols not recommended in file names (e.g. space, slash).
-#'
-#' Note that SequencingRunID must be the name of the folder in which the Rawfile_R1
-#' and Rawfile_R2 fastq files are found. The \code{in.folder} argument is the path
-#' to the SequencingRunID folder. Example: Raw files are in the folder
-#' /mnt/rawdata/illumina/20250101_testrun/. Then \code{in.folder} is "/mnt/rawdata/illumina"
-#' and \code{SequencingRunID} is "20250101_testrun".
 #'
 #' De-multiplexing means extracting subsets of reads from raw fastq files, those
 #' named in columns Rawfile_R1 and Rawfile_R2 (if single-end reads, only Rawfile_R1).
@@ -84,10 +78,10 @@ demultiplex <- function(metadata.tbl, in.folder, out.folder, trim.primers = TRUE
                           n_readpairs = 0)
   for(i in 1:nrow(utbl)) {
     cat("   Reading raw file", utbl$Rawfile_R1[i], "...\n")
-    R1.tbl <- readFastq(file.path(in.folder, utbl$SequencingRunID[i], utbl$Rawfile_R1[i])) %>%
+    R1.tbl <- readFastq(file.path(in.folder, utbl$Rawfile_R1[i])) %>%
       rename(R1.Header = Header, R1.Sequence = Sequence, R1.Quality = Quality)
     cat("   Reading raw file", utbl$Rawfile_R2[i], "...\n")
-    R2.tbl <- readFastq(file.path(in.folder, utbl$SequencingRunID[i], utbl$Rawfile_R2[i])) %>%
+    R2.tbl <- readFastq(file.path(in.folder, utbl$Rawfile_R2[i])) %>%
       rename(R2.Header = Header, R2.Sequence = Sequence, R2.Quality = Quality)
     tbl <- bind_cols(R1.tbl, R2.tbl)
     idx <- which(metadata.tbl$Rawfile_R1 == utbl$Rawfile_R1[i] & metadata.tbl$Rawfile_R2 == utbl$Rawfile_R2[i])
