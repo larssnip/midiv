@@ -22,6 +22,8 @@
 #' * Barcode
 #' * Forward_primer
 #' * Reverse_primer
+#' * filename
+#' * filename2
 #'
 #' The ProjectID, SequencingRunID and SampleID should all be a short text
 #' (SampleID may be just an integer). The names of the de-multiplexed fastq files will
@@ -47,11 +49,9 @@
 #' ProjectID_SequencingRunID_SampleID, with the extensions \code{_R1.fastq.gz}
 #' or \code{_R2.fastq.gz}.
 #'
-#' The function will return in R a table with the number of read-pairs for each
-#' sample. You may then add this as a new column to the existing
-#' \code{metadata.tbl} by
-#' \code{full_join(metadata.tbl, demultiplex.tbl, by = c("ProjectID", "SequencingRunID", "SampleID")},
-#' where \code{demultiplex.tbl} indicates the output from this function.
+#' The function will return the \code{metadata.tbl} where the columns \code{filename}
+#' and \code{filename2} have been filled with the names of the demultiplexed
+#' fastq files, the R1 and R2 file respectively.
 #'
 #'
 #' @author Lars Snipen.
@@ -72,10 +72,6 @@ demultiplex <- function(metadata.tbl, in.folder, out.folder, trim.primers = TRUE
   utbl <- metadata.tbl %>%
     select(SequencingRunID, Rawfile_R1, Rawfile_R2) %>%
     distinct()
-  readpairs.tbl <- tibble(ProjectID = metadata.tbl$ProjectID,
-                          SequencingRunID = metadata.tbl$SequencingRunID,
-                          SampleID = metadata.tbl$SampleID,
-                          n_readpairs = 0)
   for(i in 1:nrow(utbl)) {
     cat("   Reading raw file", utbl$Rawfile_R1[i], "...\n")
     R1.tbl <- readFastq(file.path(in.folder, utbl$Rawfile_R1[i])) %>%
@@ -99,9 +95,6 @@ demultiplex <- function(metadata.tbl, in.folder, out.folder, trim.primers = TRUE
         slice(rr) %>%
         mutate(R1.Sequence = str_sub(R1.Sequence, start = M[rr,2] + 1, end = -1)) %>%
         mutate(R1.Quality = str_sub(R1.Quality, start = M[rr,2] + 1, end = -1))
-        # filter(str_detect(start2, metadata.tbl$Barcode[idx[j]]))) %>%
-        # mutate(R1.Sequence = str_sub(R1.Sequence, start = nc + 1, end = -1)) %>%
-        # mutate(R1.Quality = str_sub(R1.Quality, start = nc + 1, end = -1))
       if(trim.primers){
         tbl0 <- tbl0 %>%
           mutate(R1.Sequence = str_sub(R1.Sequence, start = nf + 1, end = -1)) %>%
@@ -109,19 +102,22 @@ demultiplex <- function(metadata.tbl, in.folder, out.folder, trim.primers = TRUE
           mutate(R2.Sequence = str_sub(R2.Sequence, start = nr + 1, end = -1)) %>%
           mutate(R2.Quality = str_sub(R2.Quality, start = nr + 1, end = -1))
       }
+      R1.name <- str_c(metadata.tbl$ProjectID[idx[j]], "_",
+                       metadata.tbl$SequencingRunID[idx[j]], "_",
+                       metadata.tbl$SampleID[idx[j]], "_R1.fastq.gz")
+      R2.name <- str_c(metadata.tbl$ProjectID[idx[j]], "_",
+                       metadata.tbl$SequencingRunID[idx[j]], "_",
+                       metadata.tbl$SampleID[idx[j]], "_R2.fastq.gz")
       tbl0 %>% select(starts_with("R1")) %>%
         rename(Header = R1.Header, Sequence = R1.Sequence, Quality = R1.Quality) %>%
-        writeFastq(out.file = file.path(out.folder, str_c(metadata.tbl$ProjectID[idx[j]], "_",
-                                                          metadata.tbl$SequencingRunID[idx[j]], "_",
-                                                          metadata.tbl$SampleID[idx[j]], "_R1.fastq.gz")))
+        writeFastq(out.file = file.path(out.folder, R1.name))
       tbl0 %>% select(starts_with("R2")) %>%
         rename(Header = R2.Header, Sequence = R2.Sequence, Quality = R2.Quality) %>%
-        writeFastq(out.file = file.path(out.folder, str_c(metadata.tbl$ProjectID[idx[j]], "_",
-                                                          metadata.tbl$SequencingRunID[idx[j]], "_",
-                                                          metadata.tbl$SampleID[idx[j]], "_R2.fastq.gz")))
+        writeFastq(out.file = file.path(out.folder, R2.name))
       cat("         found", nrow(tbl0), "read-pairs\n")
-      readpairs.tbl$n_readpairs[idx[j]] <- nrow(tbl0)
+      metadata.tbl$filename[idx[j]] <- R1.name
+      metadata.tbl$filename2[idx[j]] <- R2.name
     }
   }
-  return(readpairs.tbl)
+  return(metadata.tbl)
 }

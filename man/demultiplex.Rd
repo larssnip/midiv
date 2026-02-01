@@ -25,11 +25,9 @@ The function will output the de-multiplexed fastq-files to the
 ProjectID_SequencingRunID_SampleID, with the extensions \code{_R1.fastq.gz}
 or \code{_R2.fastq.gz}.
 
-The function will return in R a table with the number of read-pairs for each
-sample. You may then add this as a new column to the existing
-\code{metadata.tbl} by
-\code{full_join(metadata.tbl, demultiplex.tbl, by = c("ProjectID", "SequencingRunID", "SampleID")},
-where \code{demultiplex.tbl} indicates the output from this function.
+The function will return the \code{metadata.tbl} where the columns \code{filename}
+and \code{filename2} have been filled with the names of the demultiplexed
+fastq files, the R1 and R2 file respectively.
 }
 \description{
 De-multiplexing Illumina data based on the extra forward barcode
@@ -47,6 +45,8 @@ format. The columns used by this function are:
 * Barcode
 * Forward_primer
 * Reverse_primer
+* filename
+* filename2
 
 The ProjectID, SequencingRunID and SampleID should all be a short text
 (SampleID may be just an integer). The names of the de-multiplexed fastq files will
